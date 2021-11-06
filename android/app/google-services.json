@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "682459210984",
+    "project_id": "bigueno-express",
+    "storage_bucket": "bigueno-express.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682459210984:android:104dc27b4cfd45af89955d",
+        "android_client_info": {
+          "package_name": "com.achievewithoutborders.biguenoexpress"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682459210984-dkj902qn1q3b32g0c0qp2jlpm3ut250f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDouGNzFVEjZmckjr44kY_ICYX_fP_uv_w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682459210984-dkj902qn1q3b32g0c0qp2jlpm3ut250f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
