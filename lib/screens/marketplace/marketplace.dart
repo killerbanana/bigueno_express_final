@@ -1,3 +1,4 @@
+import 'package:biguenoexpress/screens/chat/send_message.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -123,7 +124,9 @@ class MarketPlace extends StatelessWidget {
                       children: [
                         InkWell(
                           splashColor: Colors.greenAccent,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.popAndPushNamed(context, SendMessage.routeName);
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),

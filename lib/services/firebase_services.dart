@@ -6,13 +6,44 @@ import 'package:flutter/cupertino.dart';
 class FirebaseServices extends ChangeNotifier{
   CollectionReference partner =
   FirebaseFirestore.instance.collection('partner');
+  CollectionReference message= FirebaseFirestore.instance.collection('chat');
+  CollectionReference product = FirebaseFirestore.instance.collection('products');
+
   Partners myPartner;
   String category = "";
   Partners get partners{
     return myPartner;
   }
 
-  Future addMerchant(String uid, String shopName, String address, String openingHours) {
+  Future sendMessage(String uid, String sender, String receiver, String messages) {
+    return message
+        .doc(uid).collection('messages').doc(receiver).collection('list').doc()
+        .set({
+      "date": DateTime.now(),
+      "message": messages,
+      "sender": sender,
+    })
+        .then((value) => print("Message Sent"))
+        .catchError((error) => print("Failed to send message: $error"));
+  }
+
+  Future addProduct(String uid, String name, int price, String desc, int stock, String imgUrl) {
+    return product
+        .doc()
+        .set({
+      "product name": name,
+      "price": price,
+      "description": desc,
+      "stock": stock,
+      "seller id": uid,
+      "imgUrl": imgUrl,
+      "date added": DateTime.now()
+    })
+        .then((value) => "Product added")
+        .catchError((error) => "error: $error");
+  }
+
+  Future addMerchant(String uid, String shopName, String address, String openingHours, String url) {
     myPartner = new Partners("Merchant", shopName, openingHours, address, false, uid);
     category = "Merchant";
     notifyListeners();
@@ -23,7 +54,8 @@ class FirebaseServices extends ChangeNotifier{
       "Address": myPartner.address,
       "Opening Hours": myPartner.time,
       "Set up": myPartner.setUp,
-      "Category": myPartner.category
+      "Category": myPartner.category,
+      "Image url": url,
     })
         .then((value) => print("Added Merchant"))
         .catchError((error) => print("Failed to add Merchant: $error"));
@@ -84,8 +116,8 @@ class FirebaseServices extends ChangeNotifier{
     return datas;
   }
 
-  Future addMerchants(String uid, String shopName, String address, String openingHours) async{
-    dynamic result = await addMerchant(uid, shopName, address, openingHours);
+  Future addMerchants(String uid, String shopName, String address, String openingHours, String url) async{
+    dynamic result = await addMerchant(uid, shopName, address, openingHours, url);
     myPartner = new Partners("Merchant", shopName, openingHours, address, false, uid);
     notifyListeners();
     return notifyListeners();
@@ -104,4 +136,5 @@ class FirebaseServices extends ChangeNotifier{
     notifyListeners();
     return notifyListeners();
   }
+ 
 }

@@ -36,6 +36,9 @@ dependencies:
   scrollable_list_tabview: ^0.1.6
   flutter_rating_bar: ^4.0.0
   fluttertoast: ^8.0.8
+  file_picker: ^4.2.4
+  firebase_storage: ^8.0.3
+  form_field_validator: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

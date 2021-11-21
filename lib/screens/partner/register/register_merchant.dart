@@ -1,9 +1,17 @@
+
+import 'dart:io';
+
 import 'package:biguenoexpress/models/users.dart';
+import 'package:biguenoexpress/services/firebase_api.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:biguenoexpress/widgets/rounded_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 
 class RegisterMerchant extends StatefulWidget {
@@ -17,8 +25,14 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
   TextEditingController _shopNameController;
   TextEditingController _shopAddressController;
   TextEditingController _shopOpenHourController;
+  TextEditingController _shopDescriptionController;
 
   FirebaseServices _firebaseServices  = FirebaseServices();
+
+  UploadTask task;
+  File file;
+
+  String url = "";
 
   Users user;
 
@@ -51,6 +65,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
     _shopNameController = TextEditingController();
     _shopAddressController = TextEditingController();
     _shopOpenHourController = TextEditingController();
+    _shopDescriptionController = TextEditingController();
     super.initState();
   }
 
@@ -59,6 +74,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
     _shopNameController.dispose();
     _shopAddressController.dispose();
     _shopOpenHourController.dispose();
+    _shopDescriptionController.dispose();
     super.dispose();
   }
 
@@ -79,17 +95,47 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
               SizedBox(
                 height: 20,
               ),
+              Container(
+                height: 120,
+                width: double.infinity,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 90,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 1,
+                              style: BorderStyle.solid
+                          ),
+                        ),
+                        child: url == "" ? Center(child: Text('Add Logo')) : Image.network(url) ,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: TextButton(
+                          onPressed: selectFile,
+                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)),
+                          child: Text('Browse', style: TextStyle(color: Colors.white),),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              task != null ? buildUploadStatus(task) : Container(),
+              Divider(thickness: 20),
+              SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: TextFormField(
                   controller: _shopNameController,
                   style: TextStyle(color: Colors.black87),
-                  validator: (value) {
-                    if (value.isNotEmpty) {
-                      removeError();
-                    }
-                    return null;
-                  },
+                  validator: RequiredValidator(errorText: "Store name is required"),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
@@ -116,12 +162,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                 child: TextFormField(
                   controller: _shopAddressController,
                   style: TextStyle(color: Colors.black87),
-                  validator: (value) {
-                    if (value.isNotEmpty) {
-                      removeError();
-                    }
-                    return null;
-                  },
+                  validator: RequiredValidator(errorText: "Store address is required"),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
@@ -148,12 +189,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                 child: TextFormField(
                   controller: _shopOpenHourController,
                   style: TextStyle(color: Colors.black87),
-                  validator: (value) {
-                    if (value.isNotEmpty) {
-                      removeError();
-                    }
-                    return null;
-                  },
+                  validator: RequiredValidator(errorText: "Opening hour is required"),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
@@ -161,6 +197,33 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                           const BorderSide(color: Colors.black87, width: 0.0),
                     ),
                     hintText: "Enter Opening Hours",
+                    hintStyle: TextStyle(color: Colors.black87),
+                    prefixIcon: Icon(
+                      FontAwesomeIcons.clock,
+                      color: Colors.black87,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: TextFormField(
+                  controller: _shopDescriptionController,
+                  style: TextStyle(color: Colors.black87),
+                  validator: RequiredValidator(errorText: "Description is required"),
+                  decoration: InputDecoration(
+                    enabledBorder: const OutlineInputBorder(
+                      // width: 0.0 produces a thin "hairline" border
+                      borderSide:
+                      const BorderSide(color: Colors.black87, width: 0.0),
+                    ),
+                    hintText: "Enter Store Description",
                     hintStyle: TextStyle(color: Colors.black87),
                     prefixIcon: Icon(
                       FontAwesomeIcons.clock,
@@ -185,7 +248,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                           setState(() {
                             loading = true;
                           });
-                          await _firebaseServices.addMerchants(user.uid, _shopNameController.text, _shopAddressController.text, _shopOpenHourController.text);
+                          await _firebaseServices.addMerchants(user.uid, _shopNameController.text, _shopAddressController.text, _shopOpenHourController.text, url);
                           Navigator.pop(context);
                           setState(() {
                             loading = false;
@@ -200,4 +263,53 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
       ),
     );
   }
+
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    if (result == null) return;
+    final path = result.files.single.path;
+    setState((){
+      file = File(path);
+      uploadFile();
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+
+    final fileName = basename(file.path);
+    final destination = 'files/$fileName';
+
+    task = FirebaseApi.uploadFile(destination, file);
+    setState(() {});
+
+    if (task == null) return;
+
+    final snapshot = await task.whenComplete(() {});
+    final urlDownload = await snapshot.ref.getDownloadURL();
+
+    url = urlDownload;
+    setState(() {
+
+    });
+  }
+
+  Widget buildUploadStatus(UploadTask task) => StreamBuilder<TaskSnapshot>(
+    stream: task.snapshotEvents,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        final snap = snapshot.data;
+        final progress = snap.bytesTransferred / snap.totalBytes;
+        final percentage = (progress * 100).toStringAsFixed(2);
+
+        return Text(
+          '$percentage %',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        );
+      } else {
+        return Container();
+      }
+    },
+  );
 }

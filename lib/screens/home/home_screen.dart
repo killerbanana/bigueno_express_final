@@ -1,6 +1,8 @@
 import 'package:biguenoexpress/models/partners.dart';
 import 'package:biguenoexpress/models/users.dart';
+import 'package:biguenoexpress/screens/chat/chat_screen.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
+import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_profile.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
 import 'package:biguenoexpress/screens/test/model/product.dart';
@@ -45,6 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
           IconWithCounter(
             icon: FontAwesomeIcons.sms,
             numOfItem: 0,
+            press: () {
+              Navigator.pushNamed(context, ChatScreen.routeName);
+            },
           ),
           IconWithCounter(
             icon: FontAwesomeIcons.shoppingBag,
@@ -511,7 +516,7 @@ class DrawerPartner extends StatelessWidget {
                       color: Colors.black87,
                       icon: FontAwesomeIcons.handshake,
                       click: () {
-                        Navigator.popAndPushNamed(context, MarketPlaceProfile.routeName);
+                        Navigator.popAndPushNamed(context, MarketplaceProfile.routeName);
                       },
                     ),
                   if(category == "Food Delivery")
