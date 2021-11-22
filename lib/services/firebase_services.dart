@@ -27,7 +27,7 @@ class FirebaseServices extends ChangeNotifier{
         .catchError((error) => print("Failed to send message: $error"));
   }
 
-  Future addProduct(String uid, String name, int price, String desc, int stock, String imgUrl) {
+  Future addProductMerchant(String uid, String name, int price, String desc, int stock, String imgUrl) {
     return product
         .doc()
         .set({
@@ -37,13 +37,14 @@ class FirebaseServices extends ChangeNotifier{
       "stock": stock,
       "seller id": uid,
       "imgUrl": imgUrl,
+      "category": "market",
       "date added": DateTime.now()
     })
         .then((value) => "Product added")
         .catchError((error) => "error: $error");
   }
 
-  Future addMerchant(String uid, String shopName, String address, String openingHours, String url) {
+  Future addMerchant(String uid, String shopName, String address, String openingHours, String url, String desc) {
     myPartner = new Partners("Merchant", shopName, openingHours, address, false, uid);
     category = "Merchant";
     notifyListeners();
@@ -56,6 +57,7 @@ class FirebaseServices extends ChangeNotifier{
       "Set up": myPartner.setUp,
       "Category": myPartner.category,
       "Image url": url,
+      "Short desc": desc
     })
         .then((value) => print("Added Merchant"))
         .catchError((error) => print("Failed to add Merchant: $error"));
@@ -116,8 +118,8 @@ class FirebaseServices extends ChangeNotifier{
     return datas;
   }
 
-  Future addMerchants(String uid, String shopName, String address, String openingHours, String url) async{
-    dynamic result = await addMerchant(uid, shopName, address, openingHours, url);
+  Future addMerchants(String uid, String shopName, String address, String openingHours, String url, String desc) async{
+    dynamic result = await addMerchant(uid, shopName, address, openingHours, url, desc);
     myPartner = new Partners("Merchant", shopName, openingHours, address, false, uid);
     notifyListeners();
     return notifyListeners();

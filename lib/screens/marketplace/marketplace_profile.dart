@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'marketplace_my_product.dart';
+
 // ignore: must_be_immutable
 class MarketplaceProfile extends StatelessWidget{
   static String routeName = "/merchantProfile";
@@ -87,7 +89,9 @@ class MarketplaceProfile extends StatelessWidget{
                     ),
                   ),
                   Divider(),
-                  SellerProfileButton(title: "My Products", isNew: false, iconColor: Colors.redAccent, iconData: CupertinoIcons.cube_box, subTitle: "",),
+                  SellerProfileButton(title: "My Products", isNew: false, iconColor: Colors.redAccent, iconData: CupertinoIcons.cube_box, subTitle: "", press: () {
+                    Navigator.pushNamed(context, MarketplaceMyProduct.routeName);
+                  },),
                   SellerProfileButton(title: "Add New Products", isNew: false, iconColor: Colors.redAccent, iconData: CupertinoIcons.add_circled, subTitle: "", press: (){
                     Navigator.pushNamed(context, MarketPlaceAddProduct.routeName);
                   },),

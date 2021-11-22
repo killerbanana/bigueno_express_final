@@ -159,7 +159,7 @@ class _SendMessageState extends State<SendMessage> {
                             padding: const EdgeInsets.all(8),
                             child: TextButton(
                               onPressed: () async{
-                                dynamic result =  await _firebaseServices.sendMessage(user.uid, user.uid, 'pbM1x4uTfhNtTKnpdpbpuZfn4Sf1', _emailController.text);
+                                dynamic result =  await _firebaseServices.sendMessage(user.uid, widget.senderId, user.uid, _emailController.text);
                                 _emailController.clear();
                                 scrollToBottom();
                               },

@@ -248,7 +248,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                           setState(() {
                             loading = true;
                           });
-                          await _firebaseServices.addMerchants(user.uid, _shopNameController.text, _shopAddressController.text, _shopOpenHourController.text, url);
+                          await _firebaseServices.addMerchants(user.uid, _shopNameController.text, _shopAddressController.text, _shopOpenHourController.text, url, _shopDescriptionController.text);
                           Navigator.pop(context);
                           setState(() {
                             loading = false;

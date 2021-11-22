@@ -4,6 +4,7 @@ import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
 import 'package:biguenoexpress/screens/home/home_screen.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
+import 'package:biguenoexpress/screens/marketplace/marketplace_my_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_profile.dart';
 import 'package:biguenoexpress/screens/partner/partner.dart';
 import 'package:biguenoexpress/screens/partner/register/register_food_delivery.dart';
@@ -27,5 +28,6 @@ final Map<String, WidgetBuilder> routes = {
   ChatScreen.routeName: (context) => ChatScreen(),
   SendMessage.routeName: (context) => SendMessage(),
   MarketplaceProfile.routeName:(context) => MarketplaceProfile(),
+  MarketplaceMyProduct.routeName: (context) => MarketplaceMyProduct(),
 };
 

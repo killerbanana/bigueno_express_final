@@ -219,8 +219,10 @@ class _MarketPlaceAddProductState extends State<MarketPlaceAddProduct> {
                     }
                     else{
                       try{
-                        loading = true;
-                        dynamic result = await  _firebaseServices.addProduct(user.uid, _productNameController.text, int.parse(_productPriceController.text), _productDescController.text, int.parse(_productStockController.text), url);
+                        setState(() {
+                          loading = true;
+                        });
+                        dynamic result = await  _firebaseServices.addProductMerchant(user.uid, _productNameController.text, int.parse(_productPriceController.text), _productDescController.text, int.parse(_productStockController.text), url);
                         _formKey.currentState.reset();
                         Fluttertoast.showToast(
                             msg: result.toString(),
@@ -230,7 +232,9 @@ class _MarketPlaceAddProductState extends State<MarketPlaceAddProduct> {
                             backgroundColor: Colors.greenAccent,
                             textColor: Colors.white,
                             fontSize: 16.0);
-                        loading = false;
+                        setState(() {
+                          loading = false;
+                        });
                       }
                       catch(e){
 
