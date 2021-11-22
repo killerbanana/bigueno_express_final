@@ -38,6 +38,7 @@ class _MarketPlaceState extends State<MarketPlace> {
       body:SingleChildScrollView(
         child: ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: _sellerList.length,
             itemBuilder: (BuildContext context, int index) {
               return  Container(
@@ -101,7 +102,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                   SizedBox(height: 10,),
                   StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
-                            .collection('products')
+                            .collection('products').where('seller id', isEqualTo: _sellerId[index])
                             .snapshots(),
                         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasError) {
@@ -165,7 +166,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => SendMessage(senderId: user.uid, senderName: _sellerList[index]['Shop Name']),),
+                                    MaterialPageRoute(builder: (context) => SendMessage(senderId: _sellerId[index], senderName: _sellerList[index]['Shop Name']),),
                                   );
                                 },
                                 child: Container(
@@ -220,6 +221,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   List _sellerList = [];
+  List _sellerId = [];
   listSeller() async {
     setState(() {
       loading = true;
@@ -230,6 +232,7 @@ class _MarketPlaceState extends State<MarketPlace> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         _sellerList.add(doc);
+        _sellerId.add(doc.id);
       });
     });
     setState(() {
