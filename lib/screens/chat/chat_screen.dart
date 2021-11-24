@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class ChatScreen extends StatelessWidget {
   Users user;
-  final CollectionReference _chatStream = FirebaseFirestore.instance.collection('chat');
+  final CollectionReference _chatStream =
+      FirebaseFirestore.instance.collection('chats');
   static String routeName = "/chat_screen";
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class ChatScreen extends StatelessWidget {
         title: Text('Messages'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _chatStream.doc(user.uid).collection('messages').snapshots(),
+        stream: _chatStream.doc(user.uid).collection('chats').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Text('Something went wrong');
@@ -29,26 +30,40 @@ class ChatScreen extends StatelessWidget {
 
           return ListView(
             children: snapshot.data.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data() as Map<String, dynamic>;
               return InkWell(
                 splashColor: Colors.red,
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SendMessage(senderId: document.id, senderName: data['name'],)),
+                    MaterialPageRoute(
+                        builder: (context) => SendMessage(
+                              receiverId: document.id,
+                              receiverName: data['name'],
+                            )),
                   );
                 },
                 child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 24.0,
-                      backgroundImage: NetworkImage("https://cdn.iconscout.com/icon/free/png-256/account-avatar-profile-human-man-user-30448.png"),
-                    ),
-                    title: Text(data['name'], style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),),
-                    subtitle: Text(data['message'].toString(), style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w400),),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14.0,
-                    ),
+                  leading: CircleAvatar(
+                    radius: 24.0,
+                    backgroundImage: NetworkImage(
+                        "https://cdn.iconscout.com/icon/free/png-256/account-avatar-profile-human-man-user-30448.png"),
+                  ),
+                  title: Text(
+                    data['name'],
+                    style: TextStyle(
+                        color: Colors.black87, fontWeight: FontWeight.w400),
+                  ),
+                  subtitle: Text(
+                    data['message'].toString(),
+                    style: TextStyle(
+                        color: Colors.black87, fontWeight: FontWeight.w400),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14.0,
+                  ),
                 ),
               );
             }).toList(),

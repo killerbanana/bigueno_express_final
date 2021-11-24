@@ -7,6 +7,9 @@ class FirebaseServices extends ChangeNotifier{
   CollectionReference partner =
   FirebaseFirestore.instance.collection('partner');
   CollectionReference message= FirebaseFirestore.instance.collection('chat');
+  CollectionReference chats = FirebaseFirestore.instance.collection('chats');
+
+
   CollectionReference product = FirebaseFirestore.instance.collection('products');
 
   Partners myPartner;
@@ -16,15 +19,33 @@ class FirebaseServices extends ChangeNotifier{
   }
 
   Future sendMessage(String uid, String sender, String receiver, String messages) {
-    return message
-        .doc(uid).collection('messages').doc(receiver).collection('list').doc()
+    return message.doc(uid).collection('chats').doc(receiver).collection('messages').doc()
         .set({
       "date": DateTime.now(),
       "message": messages,
       "sender": sender,
+      "receiver": receiver
     })
         .then((value) => print("Message Sent"))
         .catchError((error) => print("Failed to send message: $error"));
+  }
+
+  Future receiveMessage(String uid, String sender, String receiver, String messages) {
+    return message.doc(receiver).collection('chats').doc(uid).collection('messages').doc()
+        .set({
+      "date": DateTime.now(),
+      "message": messages,
+      "sender": sender,
+      "receiver": receiver
+    })
+        .then((value) => print("Message Sent"))
+        .catchError((error) => print("Failed to send message: $error"));
+  }
+
+  Future addToChat(String uid, String receiver, String messages){
+    return chats.doc(uid).collection('chats').doc(receiver).set({
+      "message": messages,
+    }).then((value) => print("Message Sent")).catchError((error) => print("Error $error"));
   }
 
   Future addProductMerchant(String uid, String name, int price, String desc, int stock, String imgUrl) {

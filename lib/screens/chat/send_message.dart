@@ -7,11 +7,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SendMessage extends StatefulWidget {
-  final senderId;
-  final senderName;
+  final receiverId;
+  final receiverName;
   static String routeName = "/send_message";
 
-  const SendMessage({Key key, this.senderId, this.senderName}) : super(key: key);
+  const SendMessage({Key key, this.receiverId, this.receiverName}) : super(key: key);
 
   @override
   State<SendMessage> createState() => _SendMessageState();
@@ -53,7 +53,7 @@ class _SendMessageState extends State<SendMessage> {
     this.user = Provider.of<Users>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.senderName),
+        title: Text(widget.receiverName),
       ),
       body: Stack(
         children: [
@@ -65,9 +65,10 @@ class _SendMessageState extends State<SendMessage> {
                     SliverFillRemaining(
                       hasScrollBody: false,
                       child: StreamBuilder<QuerySnapshot>(
-                                stream: _chatStream.doc(user.uid).collection('messages').doc(widget.senderId).collection('list').orderBy('date', descending: false ).snapshots(),
+                                stream: _chatStream.doc(user.uid).collection('chats').doc(widget.receiverId).collection('messages').orderBy('date', descending: false).snapshots(),
                                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                                   if (snapshot.hasError) {
+                                    print(snapshot.error);
                                     return Text('Something went wrong');
                                   }
 
@@ -79,7 +80,7 @@ class _SendMessageState extends State<SendMessage> {
                                     children: snapshot.data.docs.map((DocumentSnapshot document) {
                                       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-                                      if(data['sender'] == user.uid){
+                                      if(data['sender'] == user.uid && data['receiver'] == widget.receiverId){
                                         return Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
@@ -99,7 +100,7 @@ class _SendMessageState extends State<SendMessage> {
                                           ),
                                         );
                                       }
-                                      else{
+                                      else if(data['receiver'] == user.uid && data['sender'] == widget.receiverId){
                                         return Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
@@ -159,7 +160,10 @@ class _SendMessageState extends State<SendMessage> {
                             padding: const EdgeInsets.all(8),
                             child: TextButton(
                               onPressed: () async{
-                                dynamic result =  await _firebaseServices.sendMessage(user.uid, widget.senderId, user.uid, _emailController.text);
+
+                                dynamic result =  await _firebaseServices.sendMessage(user.uid, user.uid, widget.receiverId, _emailController.text);
+                                dynamic result2 =  await _firebaseServices.receiveMessage(user.uid, user.uid, widget.receiverId, _emailController.text);
+                                dynamic result3 = await _firebaseServices.addToChat(user.uid, widget.receiverId, _emailController.text);
                                 _emailController.clear();
                                 scrollToBottom();
                               },
