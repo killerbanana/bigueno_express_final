@@ -179,31 +179,33 @@ class _SendMessageState extends State<SendMessage> {
                           padding: const EdgeInsets.all(8),
                           child: TextButton(
                             onPressed: () async {
+                              message = _emailController.text;
+                              _emailController.clear();
                               dynamic result =
                                   await _firebaseServices.sendMessage(
                                       user.uid,
                                       user.uid,
                                       widget.receiverId,
-                                      _emailController.text);
+                                      message);
                               dynamic result2 =
                                   await _firebaseServices.receiveMessage(
                                       user.uid,
                                       user.uid,
                                       widget.receiverId,
-                                      _emailController.text);
+                                      message);
                               dynamic result3 =
                                   await _firebaseServices.addToChat(
                                       user.uid,
                                       widget.receiverId,
-                                      _emailController.text,
+                                      message,
                                       widget.receiverName);
                               dynamic result4 =
                                   await _firebaseServices.sentMessage(
                                       widget.receiverId,
                                       user.uid,
-                                      _emailController.text,
-                                      widget.receiverName);
-                              _emailController.clear();
+                                      message,
+                                      user.email);
+
                               scrollToBottom();
                             },
                             child: Icon(

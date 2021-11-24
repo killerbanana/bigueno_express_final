@@ -50,6 +50,11 @@ class ChatScreen extends StatelessWidget {
                     backgroundImage: NetworkImage(
                         "https://cdn.iconscout.com/icon/free/png-256/account-avatar-profile-human-man-user-30448.png"),
                   ),
+                  title: Text(
+                    data['name'].toString(),
+                    style: TextStyle(
+                        color: Colors.black87, fontWeight: FontWeight.w400),
+                  ),
                   subtitle: Text(
                     data['message'].toString(),
                     style: TextStyle(
