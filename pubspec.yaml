@@ -39,6 +39,7 @@ dependencies:
   file_picker: ^4.2.4
   firebase_storage: ^8.0.3
   form_field_validator: ^1.1.0
+  group_radio_button: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

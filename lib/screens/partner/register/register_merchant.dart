@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:biguenoexpress/models/users.dart';
@@ -135,14 +134,14 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                 child: TextFormField(
                   controller: _shopNameController,
                   style: TextStyle(color: Colors.black87),
-                  validator: RequiredValidator(errorText: "Store name is required"),
+                  validator: RequiredValidator(errorText: "Shop name is required"),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
                           const BorderSide(color: Colors.black87, width: 0.0),
                     ),
-                    hintText: "Enter store name",
+                    hintText: "Enter shop name",
                     hintStyle: TextStyle(color: Colors.black87),
                     prefixIcon: Icon(
                       FontAwesomeIcons.shopify,
@@ -162,7 +161,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                 child: TextFormField(
                   controller: _shopAddressController,
                   style: TextStyle(color: Colors.black87),
-                  validator: RequiredValidator(errorText: "Store address is required"),
+                  validator: RequiredValidator(errorText: "Shop address is required"),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
@@ -223,7 +222,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                       borderSide:
                       const BorderSide(color: Colors.black87, width: 0.0),
                     ),
-                    hintText: "Enter Store Description",
+                    hintText: "Enter shop Description",
                     hintStyle: TextStyle(color: Colors.black87),
                     prefixIcon: Icon(
                       FontAwesomeIcons.clock,
@@ -243,7 +242,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                   : RoundedButton(
                       btnText: 'REGISTER',
                       press: () async {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState.validate() && url.isNotEmpty) {
                           _formKey.currentState.save();
                           setState(() {
                             loading = true;

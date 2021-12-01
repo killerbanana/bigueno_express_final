@@ -1,6 +1,10 @@
 import 'package:biguenoexpress/screens/chat/chat_screen.dart';
 import 'package:biguenoexpress/screens/chat/send_message.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_deliver_edit_product.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_add_product.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_my_product.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
 import 'package:biguenoexpress/screens/home/home_screen.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
@@ -27,7 +31,10 @@ final Map<String, WidgetBuilder> routes = {
   MarketPlaceAddProduct.routeName: (context) => MarketPlaceAddProduct(),
   ChatScreen.routeName: (context) => ChatScreen(),
   SendMessage.routeName: (context) => SendMessage(),
-  MarketplaceProfile.routeName:(context) => MarketplaceProfile(),
+  MarketplaceProfile.routeName: (context) => MarketplaceProfile(),
   MarketplaceMyProduct.routeName: (context) => MarketplaceMyProduct(),
+  FoodDeliveryProfile.routeName: (context) => FoodDeliveryProfile(),
+  FoodDeliveryAddProduct.routeName: (context) => FoodDeliveryAddProduct(),
+  FoodDeliveryMyProduct.routeName: (context) => FoodDeliveryMyProduct(),
+  FoodDeliveryEditProduct.routeName: (context) => FoodDeliveryEditProduct(),
 };
-

@@ -3,6 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class FirebaseServices extends ChangeNotifier {
+  CollectionReference _discount =
+  FirebaseFirestore.instance.collection('discount');
+
+  CollectionReference _freeDelivery =
+  FirebaseFirestore.instance.collection('free delivery');
+
   CollectionReference partner =
       FirebaseFirestore.instance.collection('partner');
   CollectionReference message = FirebaseFirestore.instance.collection('chat');
@@ -91,6 +97,47 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => "error: $error");
   }
 
+  Future addProductFoodDelivery(String uid, String name, int price, String desc,
+      int stock, String imgUrl, int off, double discountedPrice) {
+    return product
+        .doc()
+        .set({
+      "product name": name,
+      "price": price,
+      "description": desc,
+      "stock": stock,
+      "seller id": uid,
+      "imgUrl": imgUrl,
+      "category": "food delivery",
+      "daily deals": false,
+      "% off": off,
+      "date added": DateTime.now(),
+      "discounted price": discountedPrice,
+    })
+        .then((value) => "Product added")
+        .catchError((error) => "error: $error");
+  }
+
+  Future updateProductFoodDelivery(String uid, String name, int price, String desc,
+      int stock, String imgUrl, String productId) {
+    return product
+        .doc(productId)
+        .update({
+      "product name": name,
+      "price": price,
+      "description": desc,
+      "stock": stock,
+      "seller id": uid,
+      "imgUrl": imgUrl,
+      "category": "food delivery",
+      "daily deals": false,
+      "% off": 0,
+      "date updated": DateTime.now()
+    })
+        .then((value) => "Product updated")
+        .catchError((error) => "error: $error");
+  }
+
   Future addMerchant(String uid, String shopName, String address,
       String openingHours, String url, String desc) {
     myPartner =
@@ -113,7 +160,7 @@ class FirebaseServices extends ChangeNotifier {
   }
 
   Future addFoodDelivery(
-      String uid, String shopName, String address, String openingHours) {
+      String uid, String shopName, String address, String openingHours, String url, String desc, int rating, String devTime) {
     myPartner = new Partners(
         "Food Delivery", shopName, openingHours, address, false, uid);
     category = "Food Delivery";
@@ -125,8 +172,24 @@ class FirebaseServices extends ChangeNotifier {
           'Address': address,
           'Opening Hours': openingHours,
           'Category': 'Food Delivery',
-          'Set up': false
+      "Image url": url,
+      "Short desc": desc,
+          'Set up': false,
+      "Rating": 0,
+      "Delivery Time": devTime,
+      "Free Delivery": false,
+      "Percent Off": 0
         })
+        .then((value) => print("Food Delivery Added"))
+        .catchError((error) => print("Failed to add Food Delivery: $error"));
+  }
+
+  Future addFoodDeliveryDiscount(
+      String uid, int discount) {
+    return _discount.doc(uid)
+        .set({
+      "% off": discount,
+    })
         .then((value) => print("Food Delivery Added"))
         .catchError((error) => print("Failed to add Food Delivery: $error"));
   }
@@ -179,9 +242,9 @@ class FirebaseServices extends ChangeNotifier {
   }
 
   Future foodDeliveries(
-      String uid, String shopName, String address, String openingHours) async {
+      String uid, String shopName, String address, String openingHours, String url, String desc, int rating, String devTime) async {
     dynamic result =
-        await addFoodDelivery(uid, shopName, address, openingHours);
+        await addFoodDelivery(uid, shopName, address, openingHours, url, desc, rating, devTime);
     myPartner = new Partners(
         "Food Delivery", shopName, openingHours, address, false, uid);
     notifyListeners();

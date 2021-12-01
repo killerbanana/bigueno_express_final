@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class MarketplaceMyProduct extends StatelessWidget {
-  static String routeName = "/marketplace_my_product";
+  static String routeName = "/marketplaceMyProduct";
   final CollectionReference _marketplaceProduct = FirebaseFirestore.instance.collection('products');
 
   Users user;

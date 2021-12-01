@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -29,10 +30,14 @@ class _MarketPlaceState extends State<MarketPlace> {
         title: Text('Marketplace'),
         centerTitle: true,
         actions: [
-          IconWithCounter(
-            numOfItem: 1,
-            icon: FontAwesomeIcons.shoppingBag,
-          )
+          StreamBuilder<Object>(
+              stream: null,
+              builder: (context, snapshot) {
+                return IconWithCounter(
+                  numOfItem: 1,
+                  icon: FontAwesomeIcons.shoppingBag,
+                );
+              })
         ],
       ),
       body: SingleChildScrollView(
@@ -155,23 +160,26 @@ class _MarketPlaceState extends State<MarketPlace> {
                                           borderRadius:
                                               BorderRadius.circular(20),
                                         ),
-                                        height: 220,
-                                        width: 170,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: GridTile(
-                                            child: Image.network(
-                                              data['imgUrl'],
-                                              fit: BoxFit.cover,
+                                        height: 100,
+                                        width: 250,
+                                        child: GridTile(
+                                          child: Image.network(
+                                            data['imgUrl'],
+                                            fit: BoxFit.cover,
+                                          ),
+                                          footer: GridTileBar(
+                                            backgroundColor: Colors.black45,
+                                            title: Text(
+                                              '\u20B1  ${data['price']} ${data['product name']}',
+                                              textAlign: TextAlign.center,
                                             ),
-                                            footer: GridTileBar(
-                                              backgroundColor: Colors.black45,
-                                              title: Text(
-                                                '\u20B1  ${data['price']}',
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
+                                            trailing: GestureDetector(
+                                                onTap: () {
+                                                  Fluttertoast.showToast(
+                                                      msg: "Added to cart");
+                                                },
+                                                child:
+                                                    Icon(CupertinoIcons.cart)),
                                           ),
                                         ),
                                       ),
@@ -259,6 +267,7 @@ class _MarketPlaceState extends State<MarketPlace> {
 
   List _sellerList = [];
   List _sellerId = [];
+
   listSeller() async {
     setState(() {
       loading = true;

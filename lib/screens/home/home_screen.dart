@@ -2,6 +2,7 @@ import 'package:biguenoexpress/models/partners.dart';
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/chat_screen.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_profile.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
@@ -11,6 +12,7 @@ import 'package:biguenoexpress/services/auth.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:biguenoexpress/screens/partner/partner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -44,17 +46,46 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Biguneo Express'),
         actions: [
-          IconWithCounter(
-            icon: FontAwesomeIcons.sms,
-            numOfItem: 0,
-            press: () {
-              Navigator.pushNamed(context, ChatScreen.routeName);
-            },
-          ),
-          IconWithCounter(
-            icon: FontAwesomeIcons.shoppingBag,
-            numOfItem: 1,
-          ),
+          StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('chats')
+                  .doc(user.uid)
+                  .collection('chats')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading");
+                }
+                int _total = 0;
+                if (snapshot.connectionState == ConnectionState.active) {
+                  _total = snapshot.data.size;
+                  //Map<String, dynamic> data = snapshot.data.data();
+                  //print(data['quantity']);
+                }
+                return IconWithCounter(
+                  icon: FontAwesomeIcons.sms,
+                  numOfItem: _total,
+                  press: () {
+                    Navigator.pushNamed(context, ChatScreen.routeName);
+                  },
+                );
+              }),
+          StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('shop cart')
+                  .doc(user.uid)
+                  .collection('cart')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                return IconWithCounter(
+                  icon: FontAwesomeIcons.shoppingBag,
+                  numOfItem: 1,
+                );
+              }),
         ],
       ),
       body: SingleChildScrollView(
@@ -287,7 +318,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      drawer: Drawers(firebaseServices: _firebaseServices, user: user, data: data, auth: _auth),
+      drawer: Drawers(
+          firebaseServices: _firebaseServices,
+          user: user,
+          data: data,
+          auth: _auth),
     );
   }
 }
@@ -299,7 +334,9 @@ class Drawers extends StatelessWidget {
     @required this.user,
     @required this.data,
     @required AuthService auth,
-  }) : _firebaseServices = firebaseServices, _auth = auth, super(key: key);
+  })  : _firebaseServices = firebaseServices,
+        _auth = auth,
+        super(key: key);
 
   final FirebaseServices _firebaseServices;
   final Users user;
@@ -309,251 +346,233 @@ class Drawers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Object>(
-          future: _firebaseServices.readPartner(user.uid),
-          builder: (context, snapshot) {
-            if(snapshot.connectionState == ConnectionState.done){
-              if(snapshot.data == null){
-                print(snapshot.data);
-                return DrawerOriginal(auth: _auth);
-              }
-              else{
-                Map<String, dynamic> datas = snapshot.data;
-                print(datas["Category"]);
-               return DrawerPartner(auth: _auth, category: datas["Category"]);
-              }
+        future: _firebaseServices.readPartner(user.uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data == null) {
+              print(snapshot.data);
+              return DrawerOriginal(auth: _auth, email: user.email,);
+            } else {
+              Map<String, dynamic> datas = snapshot.data;
+              print(datas["Category"]);
+              return DrawerPartner(auth: _auth, category: datas["Category"], shopEmail: user.email, shopName: datas['Shop Name'],);
             }
-            return Drawer(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          });
+          }
+          return Drawer(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        });
   }
 }
 
 class DrawerOriginal extends StatelessWidget {
   const DrawerOriginal({
     Key key,
-    @required AuthService auth,
-  }) : _auth = auth, super(key: key);
+    @required AuthService auth, this.email,
+  })  : _auth = auth,
+        super(key: key);
 
   final AuthService _auth;
+  final String email;
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: Scaffold(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    color: Colors.lightBlue,
-                    width: double.infinity,
-                    height: 150,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            'Name Last Name',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            'Test@email.com',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300, fontSize: 14),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            '0987654321',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300, fontSize: 14),
-                          ),
-                        ],
-                      ),
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Container(
+                  color: Colors.lightBlue,
+                  width: double.infinity,
+                  height: 150,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Name Last Name',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 16),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          email,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300, fontSize: 14),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          '0987654321',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300, fontSize: 14),
+                        ),
+                      ],
                     ),
                   ),
-                  ProfileButton(
-                    title: "Profile Management",
-                    color: Colors.black87,
-                    icon: Icons.account_circle,
-                  ),
-                  ProfileButton(
-                    title: "Acount Settings",
-                    color: Colors.black87,
-                    icon: CupertinoIcons.settings,
-                  ),
-                  ProfileButton(
-                    title: "Favourites",
-                    color: Colors.black87,
-                    icon: FontAwesomeIcons.heart,
-                  ),
-                  ProfileButton(
-                    title: "Customer Service",
-                    color: Colors.black87,
-                    icon: FontAwesomeIcons.servicestack,
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  ProfileButton(
-                    title: "Become a Partner",
-                    color: Colors.black87,
-                    icon: FontAwesomeIcons.handshake,
-                    click: () {
-                      Navigator.popAndPushNamed(context, Partner.routeName);
-                      },
-                  ),
-                  ProfileButton(
-                    title: "Log Out",
-                    color: Colors.black87,
-                    icon: CupertinoIcons.fullscreen_exit,
-                    click: () async {
-                      await _auth.signOut();
-                      },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
+                ),
+                ProfileButton(
+                  title: "Profile Management",
+                  color: Colors.black87,
+                  icon: Icons.account_circle,
+                ),
+                ProfileButton(
+                  title: "Acount Settings",
+                  color: Colors.black87,
+                  icon: CupertinoIcons.settings,
+                ),
+                ProfileButton(
+                  title: "Favourites",
+                  color: Colors.black87,
+                  icon: FontAwesomeIcons.heart,
+                ),
+                ProfileButton(
+                  title: "Customer Service",
+                  color: Colors.black87,
+                  icon: FontAwesomeIcons.servicestack,
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                ProfileButton(
+                  title: "Become a Partner",
+                  color: Colors.black87,
+                  icon: FontAwesomeIcons.handshake,
+                  click: () {
+                    Navigator.popAndPushNamed(context, Partner.routeName);
+                  },
+                ),
+                ProfileButton(
+                  title: "Log Out",
+                  color: Colors.black87,
+                  icon: CupertinoIcons.fullscreen_exit,
+                  click: () async {
+                    await _auth.signOut();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
 class DrawerPartner extends StatelessWidget {
   const DrawerPartner({
     Key key,
-    @required AuthService auth, this.category,
-  }) : _auth = auth, super(key: key);
+    @required AuthService auth,
+    this.category, this.shopName, this.shopEmail,
+  })  : _auth = auth,
+        super(key: key);
 
   final AuthService _auth;
-  final String category;
+  final String category, shopName, shopEmail;
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: Scaffold(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    color: Colors.lightBlue,
-                    width: double.infinity,
-                    height: 150,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            'Name Last Name',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            'Test@email.com',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300, fontSize: 14),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            '0987654321',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300, fontSize: 14),
-                          ),
-                        ],
-                      ),
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Container(
+                  color: Colors.lightBlue,
+                  width: double.infinity,
+                  height: 150,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          shopName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 16),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          shopEmail,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300, fontSize: 14),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
                     ),
                   ),
+                ),
+                if (category == "Merchant")
                   ProfileButton(
-                    title: "Profile Management",
+                    title: "Manage my store",
                     color: Colors.black87,
-                    icon: Icons.account_circle,
-                  ),
-                  ProfileButton(
-                    title: "Acount Settings",
-                    color: Colors.black87,
-                    icon: CupertinoIcons.settings,
-                  ),
-                  ProfileButton(
-                    title: "Favourites",
-                    color: Colors.black87,
-                    icon: FontAwesomeIcons.heart,
-                  ),
-                  ProfileButton(
-                    title: "Customer Service",
-                    color: Colors.black87,
-                    icon: FontAwesomeIcons.servicestack,
-                  ),
-                  if(category == "Merchant")
-                    ProfileButton(
-                      title: "Manage my store",
-                      color: Colors.black87,
-                      icon: FontAwesomeIcons.handshake,
-                      click: () {
-                        Navigator.popAndPushNamed(context, MarketplaceProfile.routeName);
-                      },
-                    ),
-                  if(category == "Food Delivery")
-                    ProfileButton(
-                      title: "Manage my Product",
-                      color: Colors.black87,
-                      icon: FontAwesomeIcons.handshake,
-                      click: () {
-                        Navigator.popAndPushNamed(context, Partner.routeName);
-                      },
-                    ),
-                  if(category == "Rider")
-                    ProfileButton(
-                      title: "Manage Rider Profile",
-                      color: Colors.black87,
-                      icon: FontAwesomeIcons.handshake,
-                      click: () {
-                        Navigator.popAndPushNamed(context, Partner.routeName);
-                      },
-                    ),
-                ],
-              ),
-              Column(
-                children: [
-                  ProfileButton(
-                    title: "Log Out",
-                    color: Colors.black87,
-                    icon: CupertinoIcons.fullscreen_exit,
-                    click: () async {
-                      await _auth.signOut();
+                    icon: FontAwesomeIcons.shopify,
+                    click: () {
+                      Navigator.popAndPushNamed(
+                          context, MarketplaceProfile.routeName);
                     },
                   ),
-                ],
-              ),
-            ],
-          ),
-        ));
+                if (category == "Food Delivery")
+                  ProfileButton(
+                    title: "Manage my Product",
+                    color: Colors.black87,
+                    icon: FontAwesomeIcons.hamburger,
+                    click: () {
+                      Navigator.popAndPushNamed(
+                          context, FoodDeliveryProfile.routeName);
+                    },
+                  ),
+                if (category == "Rider")
+                  ProfileButton(
+                    title: "Manage Rider Profile",
+                    color: Colors.black87,
+                    icon: FontAwesomeIcons.handshake,
+                    click: () {
+                      Navigator.popAndPushNamed(context, Partner.routeName);
+                    },
+                  ),
+              ],
+            ),
+            Column(
+              children: [
+                ProfileButton(
+                  title: "Log Out",
+                  color: Colors.black87,
+                  icon: CupertinoIcons.fullscreen_exit,
+                  click: () async {
+                    await _auth.signOut();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -574,22 +593,23 @@ class ProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-        onPressed: click,
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: color,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                  fontWeight: FontWeight.w400, fontSize: 16, color: color),
-            )
-          ],
-        ));
+      onPressed: click,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: color,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            title,
+            style: TextStyle(
+                fontWeight: FontWeight.w400, fontSize: 16, color: color),
+          )
+        ],
+      ),
+    );
   }
 }

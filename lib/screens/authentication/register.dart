@@ -11,6 +11,7 @@ import 'login.dart';
 
 class SignUp extends StatefulWidget {
   static String routeName = "/sign_up";
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -22,7 +23,8 @@ class _SignUpState extends State<SignUp> {
   TextEditingController _passwordController;
   TextEditingController _displayNameController;
 
-  final RegExp _emailValidatorRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final RegExp _emailValidatorRegExp =
+      RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
@@ -47,6 +49,7 @@ class _SignUpState extends State<SignUp> {
         errors.remove(error);
       });
   }
+
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -74,8 +77,8 @@ class _SignUpState extends State<SignUp> {
                   'assets/img/bg.jpg',
                 ),
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken)
-            ),
+                colorFilter:
+                    ColorFilter.mode(Colors.black45, BlendMode.darken)),
           ),
         ),
         Scaffold(
@@ -108,18 +111,24 @@ class _SignUpState extends State<SignUp> {
                     decoration: InputDecoration(
                       enabledBorder: const OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
-                        borderSide: const BorderSide(color: Colors.white, width: 0.0),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 0.0),
                       ),
                       hintText: "Enter your email",
                       hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon: Icon(CupertinoIcons.mail, color: Colors.white,),
+                      prefixIcon: Icon(
+                        CupertinoIcons.mail,
+                        color: Colors.white,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16),
                   child: TextFormField(
@@ -137,41 +146,54 @@ class _SignUpState extends State<SignUp> {
                     decoration: InputDecoration(
                       enabledBorder: const OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
-                        borderSide: const BorderSide(color: Colors.white, width: 0.0),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 0.0),
                       ),
                       hintText: "Enter your password",
                       hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon: Icon(CupertinoIcons.lock, color: Colors.white,),
+                      prefixIcon: Icon(
+                        CupertinoIcons.lock,
+                        color: Colors.white,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
-                loading ?  CircularProgressIndicator(): RoundedButton(btnText: 'REGISTER', press: () async {
-                  if (_formKey.currentState.validate()) {
-                    _formKey.currentState.save();
-                    setState(() {
-                      loading = true;
-                    });
-                    dynamic result = await _auth.registerWithEmailAndPassword(
-                        _emailController.text, _passwordController.text, _emailController.text);
+                SizedBox(
+                  height: 10,
+                ),
+                loading
+                    ? CircularProgressIndicator()
+                    : RoundedButton(
+                        btnText: 'REGISTER',
+                        press: () async {
+                          if (_formKey.currentState.validate()) {
+                            _formKey.currentState.save();
+                            setState(() {
+                              loading = true;
+                            });
+                            dynamic result =
+                                await _auth.registerWithEmailAndPassword(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                    _emailController.text);
 
-                    if (result == null || result.uid == null) {
-                      setState(() {
-                        loading = false;
-                        addError(error: 'Invalid Username or Pass');
-                      });
-                    } else {
-
-                    }
-                  }
-
-                }, ),
-                SizedBox(height: 20,),
+                            if (result == null || result.uid == null) {
+                              setState(() {
+                                loading = false;
+                                addError(error: 'Invalid Username or Pass');
+                              });
+                            } else {}
+                          }
+                        },
+                      ),
+                SizedBox(
+                  height: 20,
+                ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LogInScreen()),
@@ -182,7 +204,9 @@ class _SignUpState extends State<SignUp> {
                     style: kBodyText,
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),

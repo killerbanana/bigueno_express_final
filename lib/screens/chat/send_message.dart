@@ -27,6 +27,7 @@ class _SendMessageState extends State<SendMessage> {
   String message = "";
 
   FirebaseServices _firebaseServices = FirebaseServices();
+
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -182,11 +183,8 @@ class _SendMessageState extends State<SendMessage> {
                               message = _emailController.text;
                               _emailController.clear();
                               dynamic result =
-                                  await _firebaseServices.sendMessage(
-                                      user.uid,
-                                      user.uid,
-                                      widget.receiverId,
-                                      message);
+                                  await _firebaseServices.sendMessage(user.uid,
+                                      user.uid, widget.receiverId, message);
                               dynamic result2 =
                                   await _firebaseServices.receiveMessage(
                                       user.uid,

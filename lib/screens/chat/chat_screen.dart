@@ -10,6 +10,7 @@ class ChatScreen extends StatelessWidget {
   final CollectionReference _chatStream =
       FirebaseFirestore.instance.collection('chats');
   static String routeName = "/chat_screen";
+
   @override
   Widget build(BuildContext context) {
     this.user = Provider.of<Users>(context);

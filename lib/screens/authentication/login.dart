@@ -17,6 +17,7 @@ import 'register.dart';
 
 class LogInScreen extends StatefulWidget {
   static String routeName = "/log_in";
+
   @override
   _LogInScreenState createState() => _LogInScreenState();
 }
@@ -26,7 +27,8 @@ class _LogInScreenState extends State<LogInScreen> {
   TextEditingController _passwordController;
   TextEditingController _displayNameController;
 
-  final RegExp _emailValidatorRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final RegExp _emailValidatorRegExp =
+      RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
@@ -51,6 +53,7 @@ class _LogInScreenState extends State<LogInScreen> {
         errors.remove(error);
       });
   }
+
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -67,18 +70,18 @@ class _LogInScreenState extends State<LogInScreen> {
     super.dispose();
   }
 
-
-  void _loginWithFacebook() async{
-    try{
-
+  void _loginWithFacebook() async {
+    try {
       final facebookLoginResult = await FacebookAuth.instance.login();
       print(facebookLoginResult);
       final userData = await FacebookAuth.instance.getUserData();
 
       print(facebookLoginResult);
 
-      final facebookAuthCredential = FacebookAuthProvider.credential(facebookLoginResult.accessToken.token);
-      var result =await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      final facebookAuthCredential = FacebookAuthProvider.credential(
+          facebookLoginResult.accessToken.token);
+      var result = await FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
       print(result.user.uid);
 
       await firestore.collection("Users").doc(result.user.uid).set({
@@ -86,8 +89,7 @@ class _LogInScreenState extends State<LogInScreen> {
         'imgUrl': userData['picture']['data']['url'],
         'name': userData['name'],
       }, SetOptions(merge: true));
-    }
-    catch(ex){
+    } catch (ex) {
       print(ex);
     }
   }
@@ -105,8 +107,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     'assets/img/bg.jpg',
                   ),
                   fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken)
-              ),
+                  colorFilter:
+                      ColorFilter.mode(Colors.black45, BlendMode.darken)),
             ),
           ),
           Scaffold(
@@ -140,18 +142,24 @@ class _LogInScreenState extends State<LogInScreen> {
                     decoration: InputDecoration(
                       enabledBorder: const OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
-                        borderSide: const BorderSide(color: Colors.white, width: 0.0),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 0.0),
                       ),
                       hintText: "Enter your email",
                       hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon: Icon(CupertinoIcons.mail, color: Colors.white,),
+                      prefixIcon: Icon(
+                        CupertinoIcons.mail,
+                        color: Colors.white,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16),
                   child: TextFormField(
@@ -169,11 +177,15 @@ class _LogInScreenState extends State<LogInScreen> {
                     decoration: InputDecoration(
                       enabledBorder: const OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
-                        borderSide: const BorderSide(color: Colors.white, width: 0.0),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 0.0),
                       ),
                       hintText: "Enter your password",
                       hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon: Icon(CupertinoIcons.lock, color: Colors.white,),
+                      prefixIcon: Icon(
+                        CupertinoIcons.lock,
+                        color: Colors.white,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -190,30 +202,41 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20,),
-                loading ? CircularProgressIndicator() : RoundedButton(btnText: 'LOG IN', press: () async {
-                  if (_formKey.currentState.validate()) {
-                    _formKey.currentState.save();
-                    setState(() {
-                      loading = true;
-                    });
-                    dynamic result = await _auth.signInWithEmailAndPassword(
-                        _emailController.text, _passwordController.text);
+                SizedBox(
+                  height: 20,
+                ),
+                loading
+                    ? CircularProgressIndicator()
+                    : RoundedButton(
+                        btnText: 'LOG IN',
+                        press: () async {
+                          if (_formKey.currentState.validate()) {
+                            _formKey.currentState.save();
+                            setState(() {
+                              loading = true;
+                            });
+                            dynamic result =
+                                await _auth.signInWithEmailAndPassword(
+                                    _emailController.text,
+                                    _passwordController.text);
 
-                    if (result == null) {
-                      setState(() {
-                        loading = false;
-                        addError(error: 'Invalid Username or Pass');
-                      });
-                    } else {
-                      Navigator.popAndPushNamed(context, Wrapper.routeName);
-                    }
-                  }
-                },),
-                SizedBox(height: 20,),
+                            if (result == null) {
+                              setState(() {
+                                loading = false;
+                                addError(error: 'Invalid Username or Pass');
+                              });
+                            } else {
+                              Navigator.popAndPushNamed(
+                                  context, Wrapper.routeName);
+                            }
+                          }
+                        },
+                      ),
+                SizedBox(
+                  height: 20,
+                ),
                 GestureDetector(
-                  onTap: (){
-                  },
+                  onTap: () {},
                   child: Text(
                     'OR',
                     style: kBodyText,
@@ -226,7 +249,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   },
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => SignUp()),
@@ -237,7 +260,9 @@ class _LogInScreenState extends State<LogInScreen> {
                     style: kBodyText,
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),
@@ -246,4 +271,3 @@ class _LogInScreenState extends State<LogInScreen> {
     );
   }
 }
-

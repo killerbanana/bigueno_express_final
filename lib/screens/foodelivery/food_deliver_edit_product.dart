@@ -1,51 +1,56 @@
 import 'dart:io';
 
+import 'package:biguenoexpress/models/products.dart';
 import 'package:biguenoexpress/models/users.dart';
+import 'package:biguenoexpress/services/auth.dart';
 import 'package:biguenoexpress/services/firebase_api.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:biguenoexpress/widgets/rounded_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:path/path.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart';
 
-class RegisterFoodDelivery extends StatefulWidget {
-  static String routeName = "/register_food";
+class FoodDeliveryEditProduct extends StatefulWidget {
+  static String routeName = "foodDeliveryEditProduct";
+  final String productId;
+  final Products product;
+
+  const FoodDeliveryEditProduct({Key key, this.productId, this.product})
+      : super(key: key);
 
   @override
-  State<RegisterFoodDelivery> createState() => _RegisterFoodDeliveryState();
+  State<FoodDeliveryEditProduct> createState() =>
+      _FoodDeliveryEditProductState();
 }
 
-class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
-  TextEditingController _shopNameController;
-  TextEditingController _shopAddressController;
-  TextEditingController _shopOpenHourController;
-  TextEditingController _shopDescriptionController;
-  TextEditingController _shopDeliveryController;
+class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
+  TextEditingController _productNameController;
+  TextEditingController _productPriceController;
+  TextEditingController _productDescController;
+  TextEditingController _productStockController;
+  TextEditingController _productCategoryController;
 
   FirebaseServices _firebaseServices = FirebaseServices();
+  final _formKey = GlobalKey<FormState>();
+  String email;
+  String password;
+  bool remember = false;
+  final List<String> errors = [];
+  bool loading = false;
+
+  Users user;
 
   UploadTask task;
   File file;
 
   String url = "";
 
-  Users user;
-
-  CollectionReference foodDelivery =
-      FirebaseFirestore.instance.collection('partner');
-
-  final _formKey = GlobalKey<FormState>();
-  final RegExp _emailValidatorRegExp =
-      RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-
-  final List<String> errors = [];
-  bool loading = false;
+  final AuthService _auth = AuthService();
 
   void addError({String error}) {
     if (!errors.contains(error))
@@ -63,21 +68,29 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
 
   @override
   void initState() {
-    _shopNameController = TextEditingController();
-    _shopAddressController = TextEditingController();
-    _shopOpenHourController = TextEditingController();
-    _shopDescriptionController = TextEditingController();
-    _shopDeliveryController = TextEditingController();
+    _productNameController = TextEditingController();
+    _productPriceController = TextEditingController();
+    _productDescController = TextEditingController();
+    _productStockController = TextEditingController();
+    _productCategoryController = TextEditingController();
+
+    url = widget.product.imgUrl;
+    _productNameController.text = widget.product.productName;
+    _productPriceController.text = widget.product.price.toString();
+    _productDescController.text = widget.product.description;
+    _productStockController.text = widget.product.stock.toString();
+
+
     super.initState();
   }
 
   @override
   void dispose() {
-    _shopNameController.dispose();
-    _shopAddressController.dispose();
-    _shopOpenHourController.dispose();
-    _shopDescriptionController.dispose();
-    _shopDeliveryController.dispose();
+    _productNameController.dispose();
+    _productPriceController.dispose();
+    _productDescController.dispose();
+    _productStockController.dispose();
+    _productCategoryController.dispose();
     super.dispose();
   }
 
@@ -86,16 +99,13 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
     this.user = Provider.of<Users>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register as Food Delivery'),
+        title: Text('Edit Product'),
       ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              SizedBox(
-                height: 20,
-              ),
               Container(
                 height: 120,
                 width: double.infinity,
@@ -109,10 +119,10 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
                         width: 90,
                         decoration: BoxDecoration(
                           border:
-                              Border.all(width: 1, style: BorderStyle.solid),
+                          Border.all(width: 1, style: BorderStyle.solid),
                         ),
                         child: url == ""
-                            ? Center(child: Text('Add Logo'))
+                            ? Center(child: Text('Add Photo'))
                             : Image.network(url),
                       ),
                       Padding(
@@ -121,7 +131,7 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
                           onPressed: selectFile,
                           style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(Colors.blue)),
+                              MaterialStateProperty.all(Colors.blue)),
                           child: Text(
                             'Browse',
                             style: TextStyle(color: Colors.white),
@@ -139,21 +149,21 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: TextFormField(
-                  controller: _shopNameController,
-                  style: TextStyle(color: Colors.black87),
+                  controller: _productNameController,
+                  style: TextStyle(color: Colors.black54),
                   validator:
-                      RequiredValidator(errorText: "Store name is required"),
+                  RequiredValidator(errorText: 'Product name is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                          const BorderSide(color: Colors.black87, width: 0.0),
+                      const BorderSide(color: Colors.black54, width: 0.0),
                     ),
-                    hintText: "Enter store name",
-                    hintStyle: TextStyle(color: Colors.black87),
+                    hintText: "Enter Product Name",
+                    hintStyle: TextStyle(color: Colors.black54),
                     prefixIcon: Icon(
-                      FontAwesomeIcons.shopify,
-                      color: Colors.black87,
+                      CupertinoIcons.pencil,
+                      color: Colors.black54,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -162,26 +172,26 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: TextFormField(
-                  controller: _shopAddressController,
-                  style: TextStyle(color: Colors.black87),
+                  controller: _productPriceController,
+                  style: TextStyle(color: Colors.black54),
                   validator:
-                      RequiredValidator(errorText: "Store address is required"),
+                  RequiredValidator(errorText: 'Product price is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                          const BorderSide(color: Colors.black87, width: 0.0),
+                      const BorderSide(color: Colors.black54, width: 0.0),
                     ),
-                    hintText: "Enter shop address",
-                    hintStyle: TextStyle(color: Colors.black87),
+                    hintText: "Enter Price",
+                    hintStyle: TextStyle(color: Colors.black54),
                     prefixIcon: Icon(
-                      FontAwesomeIcons.mapMarker,
-                      color: Colors.black87,
+                      CupertinoIcons.money_dollar,
+                      color: Colors.black54,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -190,26 +200,26 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: TextFormField(
-                  controller: _shopOpenHourController,
-                  style: TextStyle(color: Colors.black87),
-                  validator:
-                      RequiredValidator(errorText: "Opening hour is required"),
+                  controller: _productDescController,
+                  style: TextStyle(color: Colors.black54),
+                  validator: RequiredValidator(
+                      errorText: 'Product description is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                          const BorderSide(color: Colors.black87, width: 0.0),
+                      const BorderSide(color: Colors.black54, width: 0.0),
                     ),
-                    hintText: "Enter Opening Hours",
-                    hintStyle: TextStyle(color: Colors.black87),
+                    hintText: "Enter Product Description",
+                    hintStyle: TextStyle(color: Colors.black54),
                     prefixIcon: Icon(
-                      FontAwesomeIcons.clock,
-                      color: Colors.black87,
+                      CupertinoIcons.paperclip,
+                      color: Colors.black54,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -218,54 +228,26 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: TextFormField(
-                  controller: _shopDescriptionController,
-                  style: TextStyle(color: Colors.black87),
+                  controller: _productStockController,
+                  style: TextStyle(color: Colors.black54),
                   validator:
-                      RequiredValidator(errorText: "Description is required"),
+                  RequiredValidator(errorText: 'Product stock is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                          const BorderSide(color: Colors.black87, width: 0.0),
+                      const BorderSide(color: Colors.black54, width: 0.0),
                     ),
-                    hintText: "Enter Store Description",
-                    hintStyle: TextStyle(color: Colors.black87),
+                    hintText: "Enter Product Stock",
+                    hintStyle: TextStyle(color: Colors.black54),
                     prefixIcon: Icon(
-                      FontAwesomeIcons.clock,
-                      color: Colors.black87,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: TextFormField(
-                  controller: _shopDeliveryController,
-                  style: TextStyle(color: Colors.black87),
-                  validator:
-                      RequiredValidator(errorText: "Delivery time is required"),
-                  decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                      // width: 0.0 produces a thin "hairline" border
-                      borderSide:
-                          const BorderSide(color: Colors.black87, width: 0.0),
-                    ),
-                    hintText: "Enter Estimated Delivery Time",
-                    hintStyle: TextStyle(color: Colors.black87),
-                    prefixIcon: Icon(
-                      FontAwesomeIcons.clock,
-                      color: Colors.black87,
+                      CupertinoIcons.time,
+                      color: Colors.black54,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -279,37 +261,40 @@ class _RegisterFoodDeliveryState extends State<RegisterFoodDelivery> {
               loading
                   ? CircularProgressIndicator()
                   : RoundedButton(
-                      btnText: 'REGISTER',
-                      press: () async {
-                        if (url.isEmpty) {
-                          Fluttertoast.showToast(
-                              msg: "LOGO IS REQUIRED",
-                              backgroundColor: Colors.red);
-                          return;
-                        }
-                        if (_formKey.currentState.validate() &&
-                            url.isNotEmpty) {
-                          _formKey.currentState.save();
-                          setState(() {
-                            loading = true;
-                          });
-                          await _firebaseServices.foodDeliveries(
-                              user.uid,
-                              _shopNameController.text,
-                              _shopAddressController.text,
-                              _shopOpenHourController.text,
-                              url,
-                              _shopDescriptionController.text,
-                              0,
-                              _shopDeliveryController.text);
-                          Navigator.pop(context);
-                          setState(() {
-                            loading = false;
-                            addError(error: 'Error');
-                          });
-                        }
-                      },
-                    ),
+                btnText: 'EDIT THIS PRODUCT',
+                press: () async {
+                  if (!_formKey.currentState.validate() &&
+                      url.isNotEmpty) {
+                    return;
+                  } else {
+                    try {
+                      setState(() {
+                        loading = true;
+                      });
+                      dynamic result =
+                      await _firebaseServices.updateProductFoodDelivery(
+                          user.uid,
+                          _productNameController.text,
+                          int.parse(_productPriceController.text),
+                          _productDescController.text,
+                          int.parse(_productStockController.text),
+                          url, widget.product.id);
+                      _formKey.currentState.reset();
+                      Fluttertoast.showToast(
+                          msg: result.toString(),
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.greenAccent,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      setState(() {
+                        loading = false;
+                      });
+                    } catch (e) {}
+                  }
+                },
+              ),
             ],
           ),
         ),
