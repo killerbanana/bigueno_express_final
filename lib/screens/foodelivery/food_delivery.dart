@@ -1,5 +1,6 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/chat_screen.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_main_screen.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+
+import 'food_delivery_cart.dart';
 
 class FoodDelivery extends StatelessWidget {
   static String routeName = "/food_delivery";
@@ -72,6 +75,14 @@ class FoodDelivery extends StatelessWidget {
                 return IconWithCounter(
                   icon: FontAwesomeIcons.shoppingBag,
                   numOfItem: _total,
+                  press: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FoodDeliveryCart(
+                          )),
+                    );
+                  },
                 );
               }),
         ],
@@ -131,159 +142,170 @@ class FoodDelivery extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Stack(
-                            children: [
-                              Container(
-                                height: 180,
-                                width: double.infinity,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: NetworkImage(
-                                          data['Image url'],
-                                        ),
-                                        fit: BoxFit.cover,
-                                        colorFilter: ColorFilter.mode(
-                                            Colors.black45, BlendMode.darken))),
-                              ),
-                              Container(
-                                height: 180,
-                                child: Column(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        FutureBuilder<DocumentSnapshot>(
-                                          future:  FirebaseFirestore.instance
-                                              .collection('discount').doc(document.id)
-                                              .get(),
-                                          builder:
-                                              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-
-                                            if (snapshot.hasError) {
-                                              return Text("Something went wrong");
-                                            }
-
-                                            if (snapshot.hasData && !snapshot.data.exists) {
-                                              return Text('');
-                                            }
-
-                                            if (snapshot.connectionState == ConnectionState.done) {
-                                              Map<String, dynamic> data = snapshot.data.data() as Map<String, dynamic>;
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10),
-                                                child: Container(
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets.all(
-                                                        6.0),
-                                                    child: Text(
-                                                      '${data['% off']} % OFF',
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.blueAccent,
-                                                      borderRadius:
-                                                      BorderRadius.only(
-                                                          topRight: Radius
-                                                              .circular(20),
-                                                          bottomRight:
-                                                          Radius
-                                                              .circular(
-                                                              20))),
-                                                ),
-                                              );
-                                            }
-                                            return Text('');
-                                          },
-                                        ),
-                                        FutureBuilder<DocumentSnapshot>(
-                                          future:  FirebaseFirestore.instance
-                                              .collection('free delivery').doc(document.id)
-                                              .get(),
-                                          builder:
-                                              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-
-                                            if (snapshot.hasError) {
-                                              return Text("Something went wrong");
-                                            }
-
-                                            if (snapshot.hasData && !snapshot.data.exists) {
-                                              return Text('');
-                                            }
-
-                                            if (snapshot.connectionState == ConnectionState.done) {
-                                              Map<String, dynamic> data = snapshot.data.data() as Map<String, dynamic>;
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10),
-                                                child: Container(
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets.all(
-                                                        6.0),
-                                                    child: data['free delivery'] ? Text(
-                                                      data['free delivery']? "Free Delivery":" ",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ) : Text(''),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.blueAccent,
-                                                      borderRadius:
-                                                      BorderRadius.only(
-                                                          topRight: Radius
-                                                              .circular(20),
-                                                          bottomRight:
-                                                          Radius
-                                                              .circular(
-                                                              20))),
-                                                ),
-                                              );
-                                            }
-                                            return Text('');
-                                          },
-                                        ),
-                                      ],
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Text(
-                                            data['Delivery Time'],
-                                            style: TextStyle(
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 13),
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FoodDeliveryMainScreen(
+                                      storeId: document.id,
+                                    )),
+                              );
+                            },
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height: 180,
+                                  width: double.infinity,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                            data['Image url'],
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(20),
+                                          fit: BoxFit.cover,
+                                          colorFilter: ColorFilter.mode(
+                                              Colors.black45, BlendMode.darken))),
+                                ),
+                                Container(
+                                  height: 180,
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          FutureBuilder<DocumentSnapshot>(
+                                            future:  FirebaseFirestore.instance
+                                                .collection('discount').doc(document.id)
+                                                .get(),
+                                            builder:
+                                                (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+                                              if (snapshot.hasError) {
+                                                return Text("Something went wrong");
+                                              }
+
+                                              if (snapshot.hasData && !snapshot.data.exists) {
+                                                return Text('');
+                                              }
+
+                                              if (snapshot.connectionState == ConnectionState.done) {
+                                                Map<String, dynamic> data = snapshot.data.data() as Map<String, dynamic>;
+                                                return Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 10),
+                                                  child: Container(
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets.all(
+                                                          6.0),
+                                                      child: Text(
+                                                        '${data['% off']} % OFF',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.blueAccent,
+                                                        borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(20),
+                                                            bottomRight:
+                                                            Radius
+                                                                .circular(
+                                                                20))),
+                                                  ),
+                                                );
+                                              }
+                                              return Text('');
+                                            },
+                                          ),
+                                          FutureBuilder<DocumentSnapshot>(
+                                            future:  FirebaseFirestore.instance
+                                                .collection('free delivery').doc(document.id)
+                                                .get(),
+                                            builder:
+                                                (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+                                              if (snapshot.hasError) {
+                                                return Text("Something went wrong");
+                                              }
+
+                                              if (snapshot.hasData && !snapshot.data.exists) {
+                                                return Text('');
+                                              }
+
+                                              if (snapshot.connectionState == ConnectionState.done) {
+                                                Map<String, dynamic> data = snapshot.data.data() as Map<String, dynamic>;
+                                                return Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 10),
+                                                  child: Container(
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets.all(
+                                                          6.0),
+                                                      child: data['free delivery'] ? Text(
+                                                        data['free delivery']? "Free Delivery":" ",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            fontSize: 14),
+                                                      ) : Text(''),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.blueAccent,
+                                                        borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(20),
+                                                            bottomRight:
+                                                            Radius
+                                                                .circular(
+                                                                20))),
+                                                  ),
+                                                );
+                                              }
+                                              return Text('');
+                                            },
+                                          ),
+                                        ],
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Container(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(6.0),
+                                            child: Text(
+                                              data['Delivery Time'],
+                                              style: TextStyle(
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13),
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                    ],
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 10,

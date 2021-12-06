@@ -12,7 +12,10 @@ class FirebaseServices extends ChangeNotifier {
   CollectionReference partner =
       FirebaseFirestore.instance.collection('partner');
   CollectionReference message = FirebaseFirestore.instance.collection('chat');
+
   CollectionReference chats = FirebaseFirestore.instance.collection('chats');
+
+  CollectionReference cart = FirebaseFirestore.instance.collection('shop cart');
 
   CollectionReference product =
       FirebaseFirestore.instance.collection('products');
@@ -39,6 +42,51 @@ class FirebaseServices extends ChangeNotifier {
         })
         .then((value) => print("Message Sent"))
         .catchError((error) => print("Failed to send message: $error"));
+  }
+
+  Future addToCart(
+      String uid, String sellerId, String productId,  String productName, double productPrice, int quantity, String imageUrl) {
+    return cart
+        .doc(uid)
+        .collection('cart')
+        .doc(productId)
+        .set({
+      "seller": sellerId,
+      "product name": productName,
+      "product image": imageUrl,
+      "quantity": quantity,
+      "price": productPrice,
+      "date added": DateTime.now()
+    })
+        .then((value) => print("Added to Cart"))
+        .catchError((error) => print("Failed to add to cart: $error"));
+  }
+
+  Future updateCart(
+      String uid, String sellerId, String productId,  String productName, double quantity) {
+    return cart
+        .doc(uid)
+        .collection('cart')
+        .doc(productId)
+        .update({
+      "seller": sellerId,
+      "product name": productName,
+      "quantity": quantity,
+      "date added": DateTime.now()
+    })
+        .then((value) => print("Added to Cart"))
+        .catchError((error) => print("Failed to add to cart: $error"));
+  }
+
+  Future deleteCart(
+      String uid, String sellerId, String productId) {
+    return cart
+        .doc(uid)
+        .collection('cart')
+        .doc(productId)
+        .delete()
+        .then((value) => print("Cart Removed"))
+        .catchError((error) => print("Failed to remove cart: $error"));
   }
 
   Future receiveMessage(

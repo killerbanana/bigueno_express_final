@@ -2,6 +2,7 @@ import 'package:biguenoexpress/models/partners.dart';
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/chat_screen.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_cart.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_profile.dart';
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading");
+                  return Text("");
                 }
                 int _total = 0;
                 if (snapshot.connectionState == ConnectionState.active) {
@@ -81,9 +82,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   .collection('cart')
                   .snapshots(),
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("");
+                }
+                int _total = 0;
+                if (snapshot.connectionState == ConnectionState.active) {
+                  _total = snapshot.data.size;
+                  //Map<String, dynamic> data = snapshot.data.data();
+                  //print(data['quantity']);
+                }
                 return IconWithCounter(
                   icon: FontAwesomeIcons.shoppingBag,
-                  numOfItem: 1,
+                  numOfItem: _total,
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FoodDeliveryCart(
+                          )),
+                    );
+                  },
                 );
               }),
         ],
@@ -430,19 +452,12 @@ class DrawerOriginal extends StatelessWidget {
                   icon: Icons.account_circle,
                 ),
                 ProfileButton(
-                  title: "Acount Settings",
+                  title: "My Orders",
                   color: Colors.black87,
-                  icon: CupertinoIcons.settings,
-                ),
-                ProfileButton(
-                  title: "Favourites",
-                  color: Colors.black87,
-                  icon: FontAwesomeIcons.heart,
-                ),
-                ProfileButton(
-                  title: "Customer Service",
-                  color: Colors.black87,
-                  icon: FontAwesomeIcons.servicestack,
+                  icon: CupertinoIcons.list_dash,
+                  click: () {
+
+                  },
                 ),
               ],
             ),
