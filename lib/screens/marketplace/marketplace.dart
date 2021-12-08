@@ -62,9 +62,9 @@ class _MarketPlaceState extends State<MarketPlace> {
                                 width: 100,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                  image: NetworkImage(
-                                      _sellerList[index]['Image url']),
-                                )),
+                                      image: NetworkImage(
+                                          _sellerList[index]['Image url']),
+                                    )),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
@@ -107,15 +107,15 @@ class _MarketPlaceState extends State<MarketPlace> {
                               _sellerList[index]['Rating'] <= 0
                                   ? Text('No rating')
                                   : RatingBarIndicator(
-                                      rating: _sellerList[index]['Rating'],
-                                      itemBuilder: (context, index) => Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      itemCount: 5,
-                                      itemSize: 20.0,
-                                      direction: Axis.horizontal,
-                                    ),
+                                rating: _sellerList[index]['Rating'],
+                                itemBuilder: (context, index) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                itemCount: 5,
+                                itemSize: 20.0,
+                                direction: Axis.horizontal,
+                              ),
                             ],
                           ),
                         ],
@@ -147,7 +147,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                               children: snapshot.data.docs
                                   .map((DocumentSnapshot document) {
                                 Map<String, dynamic> data =
-                                    document.data() as Map<String, dynamic>;
+                                document.data() as Map<String, dynamic>;
                                 return Container(
                                   height: 220,
                                   child: Card(
@@ -158,7 +158,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(20),
+                                          BorderRadius.circular(20),
                                         ),
                                         height: 100,
                                         width: 250,
@@ -173,13 +173,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                               '\u20B1  ${data['price']} ${data['product name']}',
                                               textAlign: TextAlign.center,
                                             ),
-                                            trailing: GestureDetector(
-                                                onTap: () {
-                                                  Fluttertoast.showToast(
-                                                      msg: "Added to cart");
-                                                },
-                                                child:
-                                                    Icon(CupertinoIcons.cart)),
                                           ),
                                         ),
                                       ),
@@ -203,7 +196,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                   builder: (context) => SendMessage(
                                       receiverId: _sellerId[index],
                                       receiverName: _sellerList[index]
-                                          ['Shop Name']),
+                                      ['Shop Name']),
                                 ),
                               );
                             },
@@ -274,7 +267,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     });
     await FirebaseFirestore.instance
         .collection('partner')
-        .where('Category', isEqualTo: 'Merchant')
+        .where('Category', isEqualTo: 'Merchant').where("Verified", isEqualTo: true)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {

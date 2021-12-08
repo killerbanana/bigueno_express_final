@@ -120,7 +120,7 @@ class FoodDelivery extends StatelessWidget {
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('partner')
-                    .where('Category', isEqualTo: "Food Delivery")
+                    .where('Category', isEqualTo: "Food Delivery").where("Verified", isEqualTo: true)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {

@@ -347,16 +347,13 @@ class _FoodDeliveryAddProductState extends State<FoodDeliveryAddProduct> {
 
                             if (_productDiscountController.text.isNotEmpty &&
                                 _productPriceController.text.isNotEmpty) {
-                              double discount =
-                                  (double.parse(_productPriceController.text) /
-                                      double.parse(
-                                          _productDiscountController.text) *
-                                      1);
-                              discount =
-                                  double.parse(_productPriceController.text) -
-                                      discount;
 
-                              discountedPrice = discount;
+                              double dprice = 0.0;
+
+                              dprice = ( double.parse(_productDiscountController.text) / 100 ) * double.parse(_productPriceController.text);
+
+                              discountedPrice = double.parse(_productPriceController.text) - dprice;
+
                               off = int.parse(_productDiscountController.text);
 
                               dynamic result = await _firebaseServices

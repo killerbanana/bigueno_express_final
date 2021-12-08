@@ -6,6 +6,7 @@ import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:biguenoexpress/widgets/rounded_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -242,6 +243,12 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                   : RoundedButton(
                       btnText: 'REGISTER',
                       press: () async {
+                        if (url.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "LOGO IS REQUIRED",
+                              backgroundColor: Colors.red);
+                          return;
+                        }
                         if (_formKey.currentState.validate() && url.isNotEmpty) {
                           _formKey.currentState.save();
                           setState(() {

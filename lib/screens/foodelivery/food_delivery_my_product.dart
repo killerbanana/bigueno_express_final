@@ -1,7 +1,6 @@
 import 'package:biguenoexpress/models/products.dart';
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_deliver_edit_product.dart';
-import 'package:biguenoexpress/screens/test/model/product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +61,9 @@ class FoodDeliveryMyProduct extends StatelessWidget {
                                         data['description'],
                                         data['imgUrl'],
                                         data['price'],
-                                        data['stock']),
+                                        data['stock'],
+                                    data['% off'],
+                                    data['discounted price']),
                                   )));
                     },
                     child: TextButton(

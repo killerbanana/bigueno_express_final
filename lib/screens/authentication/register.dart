@@ -181,11 +181,13 @@ class _SignUpState extends State<SignUp> {
                                     _emailController.text);
 
                             if (result == null || result.uid == null) {
-                              setState(() {
-                                loading = false;
-                                addError(error: 'Invalid Username or Pass');
-                              });
-                            } else {}
+                            }
+                            else {}
+                            setState(() {
+                              loading = false;
+                              addError(error: 'Invalid Username or Pass');
+                            });
+                            Navigator.pop(context);
                           }
                         },
                       ),

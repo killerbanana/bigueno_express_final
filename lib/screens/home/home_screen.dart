@@ -4,9 +4,11 @@ import 'package:biguenoexpress/screens/chat/chat_screen.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_cart.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
+import 'package:biguenoexpress/screens/home/my_orders.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_profile.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
 import 'package:biguenoexpress/screens/test/model/product.dart';
 import 'package:biguenoexpress/screens/test/provider/products.dart';
 import 'package:biguenoexpress/services/auth.dart';
@@ -456,7 +458,7 @@ class DrawerOriginal extends StatelessWidget {
                   color: Colors.black87,
                   icon: CupertinoIcons.list_dash,
                   click: () {
-
+                    Navigator.popAndPushNamed(context, MyOrders.routeName);
                   },
                 ),
               ],
@@ -567,7 +569,7 @@ class DrawerPartner extends StatelessWidget {
                     color: Colors.black87,
                     icon: FontAwesomeIcons.handshake,
                     click: () {
-                      Navigator.popAndPushNamed(context, Partner.routeName);
+                      Navigator.popAndPushNamed(context, PawItProfile.routeName);
                     },
                   ),
               ],

@@ -6,7 +6,9 @@ class Products {
   final String imgUrl;
   final int price;
   final int stock;
+  final int percentOff;
+  final double discountedPrice;
 
-  Products(this.id, this.productName, this.dailyDeals, this.description, this.imgUrl, this.price, this.stock);
+  Products(this.id, this.productName, this.dailyDeals, this.description, this.imgUrl, this.price, this.stock, this.percentOff, this.discountedPrice);
 }
 

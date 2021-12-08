@@ -3,9 +3,11 @@ import 'package:biguenoexpress/screens/chat/send_message.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_deliver_edit_product.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_add_product.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_checkout.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_my_product.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
 import 'package:biguenoexpress/screens/home/home_screen.dart';
+import 'package:biguenoexpress/screens/home/my_orders.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_my_product.dart';
@@ -15,6 +17,7 @@ import 'package:biguenoexpress/screens/partner/register/register_food_delivery.d
 import 'package:biguenoexpress/screens/partner/register/register_merchant.dart';
 import 'package:biguenoexpress/screens/partner/register/register_rider.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
 import 'package:flutter/widgets.dart';
 import 'wrapper.dart';
 
@@ -37,4 +40,7 @@ final Map<String, WidgetBuilder> routes = {
   FoodDeliveryAddProduct.routeName: (context) => FoodDeliveryAddProduct(),
   FoodDeliveryMyProduct.routeName: (context) => FoodDeliveryMyProduct(),
   FoodDeliveryEditProduct.routeName: (context) => FoodDeliveryEditProduct(),
+  PawItProfile.routeName :(context) => PawItProfile(),
+  FoodDeliveryCheckout.routeName: (context) => FoodDeliveryCheckout(),
+  MyOrders.routeName: (context) => MyOrders(),
 };

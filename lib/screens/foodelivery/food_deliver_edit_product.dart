@@ -12,11 +12,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:provider/provider.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 class FoodDeliveryEditProduct extends StatefulWidget {
-  static String routeName = "foodDeliveryEditProduct";
+  static String routeName = "/foodDeliveryEditProduct";
+
   final String productId;
   final Products product;
 
@@ -24,7 +26,7 @@ class FoodDeliveryEditProduct extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<FoodDeliveryEditProduct> createState() =>
+  _FoodDeliveryEditProductState createState() =>
       _FoodDeliveryEditProductState();
 }
 
@@ -34,6 +36,7 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
   TextEditingController _productDescController;
   TextEditingController _productStockController;
   TextEditingController _productCategoryController;
+  TextEditingController _productDiscountController;
 
   FirebaseServices _firebaseServices = FirebaseServices();
   final _formKey = GlobalKey<FormState>();
@@ -43,12 +46,18 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
   final List<String> errors = [];
   bool loading = false;
 
+  double discountedPrice = 0;
+  int off = 0;
   Users user;
 
   UploadTask task;
   File file;
 
-  String url = "";
+  String url;
+  String _productGroupValue = "Standard Delivery";
+  String _discountGroupValue = "No Discount";
+  List<String> _delivery = ["Standard Delivery", "Free Delivery"];
+  List<String> _discount = ["No Discount", "With Discount"];
 
   final AuthService _auth = AuthService();
 
@@ -73,14 +82,16 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
     _productDescController = TextEditingController();
     _productStockController = TextEditingController();
     _productCategoryController = TextEditingController();
-
-    url = widget.product.imgUrl;
+    _productDiscountController = TextEditingController();
+    if(widget.product.percentOff != 0) {
+      _discountGroupValue = "With Discount";
+      _productDiscountController.text = widget.product.percentOff.toString();
+    }
     _productNameController.text = widget.product.productName;
     _productPriceController.text = widget.product.price.toString();
     _productDescController.text = widget.product.description;
     _productStockController.text = widget.product.stock.toString();
-
-
+    url = widget.product.imgUrl;
     super.initState();
   }
 
@@ -91,6 +102,7 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
     _productDescController.dispose();
     _productStockController.dispose();
     _productCategoryController.dispose();
+    _productDiscountController.dispose();
     super.dispose();
   }
 
@@ -99,7 +111,8 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
     this.user = Provider.of<Users>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Product'),
+        title: Text('Manage my Products'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -119,9 +132,9 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
                         width: 90,
                         decoration: BoxDecoration(
                           border:
-                          Border.all(width: 1, style: BorderStyle.solid),
+                              Border.all(width: 1, style: BorderStyle.solid),
                         ),
-                        child: url == ""
+                        child: url == null
                             ? Center(child: Text('Add Photo'))
                             : Image.network(url),
                       ),
@@ -131,7 +144,7 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
                           onPressed: selectFile,
                           style: ButtonStyle(
                               backgroundColor:
-                              MaterialStateProperty.all(Colors.blue)),
+                                  MaterialStateProperty.all(Colors.blue)),
                           child: Text(
                             'Browse',
                             style: TextStyle(color: Colors.white),
@@ -152,12 +165,12 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
                   controller: _productNameController,
                   style: TextStyle(color: Colors.black54),
                   validator:
-                  RequiredValidator(errorText: 'Product name is required'),
+                      RequiredValidator(errorText: 'Product name is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                      const BorderSide(color: Colors.black54, width: 0.0),
+                          const BorderSide(color: Colors.black54, width: 0.0),
                     ),
                     hintText: "Enter Product Name",
                     hintStyle: TextStyle(color: Colors.black54),
@@ -178,14 +191,15 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: TextFormField(
                   controller: _productPriceController,
+                  keyboardType: TextInputType.number,
                   style: TextStyle(color: Colors.black54),
                   validator:
-                  RequiredValidator(errorText: 'Product price is required'),
+                      RequiredValidator(errorText: 'Product price is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                      const BorderSide(color: Colors.black54, width: 0.0),
+                          const BorderSide(color: Colors.black54, width: 0.0),
                     ),
                     hintText: "Enter Price",
                     hintStyle: TextStyle(color: Colors.black54),
@@ -213,7 +227,7 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                      const BorderSide(color: Colors.black54, width: 0.0),
+                          const BorderSide(color: Colors.black54, width: 0.0),
                     ),
                     hintText: "Enter Product Description",
                     hintStyle: TextStyle(color: Colors.black54),
@@ -236,12 +250,12 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
                   controller: _productStockController,
                   style: TextStyle(color: Colors.black54),
                   validator:
-                  RequiredValidator(errorText: 'Product stock is required'),
+                      RequiredValidator(errorText: 'Product stock is required'),
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       // width: 0.0 produces a thin "hairline" border
                       borderSide:
-                      const BorderSide(color: Colors.black54, width: 0.0),
+                          const BorderSide(color: Colors.black54, width: 0.0),
                     ),
                     hintText: "Enter Product Stock",
                     hintStyle: TextStyle(color: Colors.black54),
@@ -258,42 +272,146 @@ class _FoodDeliveryEditProductState extends State<FoodDeliveryEditProduct> {
               SizedBox(
                 height: 20,
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: RadioGroup<String>.builder(
+                  direction: Axis.horizontal,
+                  groupValue: _productGroupValue,
+                  onChanged: (value) => setState(() {
+                    _productGroupValue = value;
+                  }),
+                  items: _delivery,
+                  itemBuilder: (item) => RadioButtonBuilder(
+                    item,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: RadioGroup<String>.builder(
+                  direction: Axis.horizontal,
+                  groupValue: _discountGroupValue,
+                  onChanged: (value) => setState(() {
+                    if (value == "No Discount") {
+                      _productDiscountController.clear();
+                    }
+                    _discountGroupValue = value;
+                  }),
+                  items: _discount,
+                  itemBuilder: (item) => RadioButtonBuilder(
+                    item,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              _discountGroupValue == "With Discount"
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: TextFormField(
+                        controller: _productDiscountController,
+                        style: TextStyle(color: Colors.black54),
+                        keyboardType: TextInputType.number,
+                        validator: MultiValidator(
+                          [
+                            RequiredValidator(
+                                errorText: 'Discount % is required'),
+                            RangeValidator(
+                                min: 1, max: 100, errorText: "Invalid discount percentage. Enter 1% ~ 100%")
+                          ],
+                        ),
+                        decoration: InputDecoration(
+                          enabledBorder: const OutlineInputBorder(
+                            // width: 0.0 produces a thin "hairline" border
+                            borderSide: const BorderSide(
+                                color: Colors.black54, width: 0.0),
+                          ),
+                          hintText: "Enter Product Discount Percent",
+                          hintStyle: TextStyle(color: Colors.black54),
+                          prefixIcon: Icon(
+                            CupertinoIcons.percent,
+                            color: Colors.black54,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Text(''),
+              SizedBox(
+                height: 20,
+              ),
               loading
                   ? CircularProgressIndicator()
                   : RoundedButton(
-                btnText: 'EDIT THIS PRODUCT',
-                press: () async {
-                  if (!_formKey.currentState.validate() &&
-                      url.isNotEmpty) {
-                    return;
-                  } else {
-                    try {
-                      setState(() {
-                        loading = true;
-                      });
-                      dynamic result =
-                      await _firebaseServices.updateProductFoodDelivery(
-                          user.uid,
-                          _productNameController.text,
-                          int.parse(_productPriceController.text),
-                          _productDescController.text,
-                          int.parse(_productStockController.text),
-                          url, widget.product.id);
-                      _formKey.currentState.reset();
-                      Fluttertoast.showToast(
-                          msg: result.toString(),
-                          toastLength: Toast.LENGTH_LONG,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.greenAccent,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                      setState(() {
-                        loading = false;
-                      });
-                    } catch (e) {}
-                  }
-                },
+                      btnText: 'UPDATE THIS PRODUCT',
+                      press: () async {
+                        if (!_formKey.currentState.validate() && url == null) {
+                          Fluttertoast.showToast(
+                              msg: "Product image is required",
+                              backgroundColor: Colors.red);
+                          return;
+                        } else {
+                          try {
+                            setState(() {
+                              loading = true;
+                            });
+
+                            if (_productDiscountController.text.isNotEmpty &&
+                                _productPriceController.text.isNotEmpty) {
+                              double dprice = 0.0;
+
+                              dprice = ( double.parse(_productDiscountController.text) / 100 ) * double.parse(_productPriceController.text);
+
+                              discountedPrice = double.parse(_productPriceController.text) - dprice;
+
+                              off = int.parse(_productDiscountController.text);
+
+                              dynamic result = await _firebaseServices
+                                  .addFoodDeliveryDiscount(
+                                      user.uid,
+                                      int.parse(
+                                          _productDiscountController.text));
+                            } else {
+                              off = 0;
+                              discountedPrice =
+                                  double.parse(_productPriceController.text);
+                            }
+
+                            dynamic result = await _firebaseServices
+                                .updateProductFoodDelivery(
+                                    user.uid,
+                                    _productNameController.text,
+                                    int.parse(_productPriceController.text),
+                                    _productDescController.text,
+                                    int.parse(_productStockController.text),
+                                    url,
+                                    widget.productId,
+                                    off,
+                                    discountedPrice);
+                            _formKey.currentState.reset();
+                            Fluttertoast.showToast(
+                                msg: result.toString(),
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.greenAccent,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            setState(() {
+                              loading = false;
+                            });
+                          } catch (e) {}
+                        }
+                      },
+                    ),
+              SizedBox(
+                height: 30,
               ),
             ],
           ),
