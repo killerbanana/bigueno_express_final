@@ -19,9 +19,11 @@ import 'package:biguenoexpress/screens/partner/partner.dart';
 import 'package:biguenoexpress/screens/partner/register/register_food_delivery.dart';
 import 'package:biguenoexpress/screens/partner/register/register_merchant.dart';
 import 'package:biguenoexpress/screens/partner/register/register_rider.dart';
+import 'package:biguenoexpress/screens/pawit/order_status/paw_it_completed_delivery.dart';
 import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_confirmation_delivery.dart';
 import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_delivery.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it_deliver_history.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
 import 'package:flutter/widgets.dart';
 import 'wrapper.dart';
@@ -53,4 +55,6 @@ final Map<String, WidgetBuilder> routes = {
   FoodDeliveryCompleted.routeName: (context) => FoodDeliveryCompleted(),
   PawItForConfirmationDelivery.routeName: (context) => PawItForConfirmationDelivery(),
   PawItForDelivery.routeName: (context) => PawItForDelivery(),
+  PawItCompletedDelivery.routeName: (context) => PawItCompletedDelivery(),
+  PawItDeliverHistory.routeName: (context) => PawItDeliverHistory(),
 };

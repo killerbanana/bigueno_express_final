@@ -90,10 +90,23 @@ class FirebaseServices extends ChangeNotifier {
     return orders
         .doc(uid)
         .update({
-          "date": DateTime.now(),
-          "status": "For Delivery",
-          "rider id": riderId
-        })
+      "date": DateTime.now(),
+      "status": "For Delivery",
+      "rider status": "For Delivery",
+      "rider id": riderId
+    })
+        .then((value) => print("Order Confirmed"))
+        .catchError((error) => print("Failed to confirm order: $error"));
+  }
+
+  Future confirmOrderDelivered(String uid, String riderId) {
+    return orders
+        .doc(uid)
+        .update({
+      "date": DateTime.now(),
+      "rider status": "Delivered",
+      "rider id": riderId
+    })
         .then((value) => print("Order Confirmed"))
         .catchError((error) => print("Failed to confirm order: $error"));
   }
@@ -454,6 +467,13 @@ class FirebaseServices extends ChangeNotifier {
   Stream<QuerySnapshot<Map<String, dynamic>>> snapshots(String uid) {
     return _collection
         .where('seller', isEqualTo: uid)
+        .where('status', isEqualTo: 'Completed')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> snapshotsRider(String uid) {
+    return _collection
+        .where('rider id', isEqualTo: uid)
         .where('status', isEqualTo: 'Completed')
         .snapshots();
   }

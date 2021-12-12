@@ -1,5 +1,7 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
+import 'package:biguenoexpress/screens/pawit/order_status/paw_it_completed_delivery.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it_deliver_history.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +98,12 @@ class PawItProfile extends StatelessWidget {
                     ),
                     Divider(),
                     SellerProfileButton(
+                      press: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => PawItDeliverHistory(uid: user.uid)),
+                        );
+                      },
                       title: "My Deliveries",
                       isNew: false,
                       iconColor: Colors.blueAccent,
@@ -126,8 +134,11 @@ class PawItProfile extends StatelessWidget {
                             title: "To Deliver",
                           ),
                           SalesActionButton(
-                            iconData: CupertinoIcons.delete_right,
-                            title: "Cancelled",
+                            press: (){
+                              Navigator.pushNamed(context, PawItCompletedDelivery.routeName);
+                            },
+                            iconData: CupertinoIcons.flag_circle,
+                            title: "Delivered",
                           ),
                         ],
                       ),

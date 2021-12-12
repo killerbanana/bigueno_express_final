@@ -2,16 +2,15 @@ import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-class PawItForDelivery extends StatefulWidget {
-  static String routeName = "/pawItForDelivery";
+class PawItCompletedDelivery extends StatefulWidget {
+  static String routeName = "/pawItDelivered";
   @override
-  _PawItForDeliveryState createState() => _PawItForDeliveryState();
+  _PawItCompletedDeliveryState createState() => _PawItCompletedDeliveryState();
 }
 
-class _PawItForDeliveryState extends State<PawItForDelivery> {
+class _PawItCompletedDeliveryState extends State<PawItCompletedDelivery> {
   Users user;
   List<dynamic> cart = [];
 
@@ -19,9 +18,9 @@ class _PawItForDeliveryState extends State<PawItForDelivery> {
   @override
   Widget build(BuildContext context) {
     this.user = Provider.of<Users>(context);
-    return Scaffold(
+    return  Scaffold(
       appBar: AppBar(
-        title: Text('For Delivery'),
+        title: Text('Delivered'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -30,7 +29,7 @@ class _PawItForDeliveryState extends State<PawItForDelivery> {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('orders')
-                  .where('rider status', isEqualTo: "For Delivery")
+                  .where('rider status', isEqualTo: "Delivered")
                   .orderBy('date', descending: true)
                   .snapshots(),
               builder: (BuildContext context,
@@ -84,35 +83,6 @@ class _PawItForDeliveryState extends State<PawItForDelivery> {
                                         '\u20B1  ${element['price'].toString()} x ${element['qty'].toStringAsFixed(0)}'),
                                   );
                                 }).toList()),
-                            Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                  onPressed: () async {
-                                    await _firebaseServices.confirmOrderDelivered(document.id, user.uid);
-                                    Fluttertoast.showToast(
-                                        msg: 'Successfully Updated');
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                    MaterialStateProperty.all(
-                                        Colors.blueAccent),
-                                  ),
-                                  child: Text(
-                                    'ORDER DELIVERED',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                                Text(
-                                  'Order Total \u20B1  ${data['total'].toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: Colors.blueAccent),
-                                ),
-                              ],
-                            ),
                             Divider(),
                             Text(
                               'Delivery Details',
