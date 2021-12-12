@@ -20,7 +20,7 @@ class PawIt extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CupertinoSearchTextField(
+              /*CupertinoSearchTextField(
                 placeholder: 'Search Rider',
                 onChanged: (String value) {
                   print('The text has changed to: $value');
@@ -28,7 +28,7 @@ class PawIt extends StatelessWidget {
                 onSubmitted: (String value) {
                   print('Submitted text: $value');
                 },
-              ),
+              ), */
               SizedBox(height: 20,),
               Text('Available Riders', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
               SizedBox(height: 20,),
@@ -118,7 +118,6 @@ class PawIt extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Icon(CupertinoIcons.chat_bubble),
-                                      Text('Chat'),
                                     ],
                                   ),
                                 ),
@@ -199,7 +198,7 @@ class PawIt extends StatelessWidget {
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.circle, color: Colors.green, size: 16,),
+                                      Icon(Icons.circle, color: Colors.orange, size: 16,),
                                       Text(data['Status'], style: TextStyle(fontWeight: FontWeight.w300),),
                                     ],
                                   ),

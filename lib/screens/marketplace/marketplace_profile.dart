@@ -75,8 +75,6 @@ class MarketplaceProfile extends StatelessWidget{
                     ),
                   ),
                   Divider(),
-                  SellerProfileButton(title: "My Sales", isNew: false, iconColor: Colors.blueAccent, iconData: CupertinoIcons.list_dash, subTitle: "View Sales History",),
-                  Divider(height: 1,),
                   Container(
                     color: Colors.white,
                     child: Row(
@@ -106,7 +104,6 @@ class MarketplaceProfile extends StatelessWidget{
                   // Divider(height: 1,),
                   // SellerProfileButton(title: "Chat with Bigueno Express", isNew: false, iconColor: Colors.redAccent, iconData: CupertinoIcons.chat_bubble_2, subTitle: "",),
                   Divider(),
-                  SellerProfileButton(title: "View My Shop", isNew: false, iconColor: Colors.redAccent, iconData: CupertinoIcons.eye, subTitle: "biguenoexpress.ph/josh.rosqueta",),
                 ],
               ),
             );

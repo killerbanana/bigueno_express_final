@@ -11,10 +11,10 @@ class FoodDeliveryCheckout extends StatefulWidget {
   static String routeName = "/food_delivery_checkout";
 
   final List<Cart> myCart;
-
+  final String storeName;
   final double total;
 
-  const FoodDeliveryCheckout({Key key, this.myCart, this.total})
+  const FoodDeliveryCheckout({Key key, this.myCart, this.total, this.storeName})
       : super(key: key);
 
   @override
@@ -190,6 +190,7 @@ class _FoodDeliveryCheckoutState extends State<FoodDeliveryCheckout> {
                             setState(() {});
 
                             dynamic result = await _firebaseServices.addOrder(
+                              widget.storeName,
                                 user.uid,
                                 seller,
                                 orders,

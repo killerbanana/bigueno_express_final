@@ -6,6 +6,9 @@ import 'package:biguenoexpress/screens/foodelivery/food_delivery_add_product.dar
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_checkout.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_my_product.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
+import 'package:biguenoexpress/screens/foodelivery/order_status/food_delivery_completed.dart';
+import 'package:biguenoexpress/screens/foodelivery/order_status/food_delivery_for_confirmation.dart';
+import 'package:biguenoexpress/screens/foodelivery/order_status/food_delivery_for_delivery.dart';
 import 'package:biguenoexpress/screens/home/home_screen.dart';
 import 'package:biguenoexpress/screens/home/my_orders.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace.dart';
@@ -16,6 +19,8 @@ import 'package:biguenoexpress/screens/partner/partner.dart';
 import 'package:biguenoexpress/screens/partner/register/register_food_delivery.dart';
 import 'package:biguenoexpress/screens/partner/register/register_merchant.dart';
 import 'package:biguenoexpress/screens/partner/register/register_rider.dart';
+import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_confirmation_delivery.dart';
+import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_delivery.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
 import 'package:flutter/widgets.dart';
@@ -43,4 +48,9 @@ final Map<String, WidgetBuilder> routes = {
   PawItProfile.routeName :(context) => PawItProfile(),
   FoodDeliveryCheckout.routeName: (context) => FoodDeliveryCheckout(),
   MyOrders.routeName: (context) => MyOrders(),
+  FoodDeliveryForConfirmation.routeName: (context) => FoodDeliveryForConfirmation(),
+  FoodDeliveryForDelivery.routeName: (context) => FoodDeliveryForDelivery(),
+  FoodDeliveryCompleted.routeName: (context) => FoodDeliveryCompleted(),
+  PawItForConfirmationDelivery.routeName: (context) => PawItForConfirmationDelivery(),
+  PawItForDelivery.routeName: (context) => PawItForDelivery(),
 };

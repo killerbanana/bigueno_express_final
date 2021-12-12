@@ -8,7 +8,8 @@ import 'package:spinner_input/spinner_input.dart';
 
 class StoreList extends StatefulWidget {
   final String storeId;
-  const StoreList({Key key, this.storeId}) : super(key: key);
+  final String storeName;
+  const StoreList({Key key, this.storeId, this.storeName}) : super(key: key);
 
   @override
   _StoreListState createState() => _StoreListState();
@@ -179,6 +180,7 @@ class _StoreListState extends State<StoreList> {
                                           ),
                                         ),
                                   ProductList(
+                                    storeName: widget.storeName,
                                     docId: document.id,
                                     storeId: widget.storeId,
                                     productName: data['product name'],

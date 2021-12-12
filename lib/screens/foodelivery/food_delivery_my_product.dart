@@ -46,7 +46,33 @@ class FoodDeliveryMyProduct extends StatelessWidget {
                     backgroundImage: NetworkImage(data['imgUrl']),
                   ),
                   title: Text(data['product name']),
-                  subtitle: Text('\u20B1' + ' ' + data['price'].toString()),
+                  subtitle: Row(
+                    children: [
+                      data['% off'] > 0
+                          ? Row(
+                            children: [
+                              Text(
+                                '\u20B1 ${data['price'].toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    decoration:
+                                    TextDecoration
+                                        .lineThrough,
+                                    fontWeight:
+                                    FontWeight.w300),
+                              ),
+                              Text('\u20B1' +
+                                  ' ' +
+                                  data['discounted price'].toStringAsFixed(2) +
+                                  ' (' +
+                                  data['% off'].toString() +
+                                  ' % off)'),
+                            ],
+                          )
+                          : Text('\u20B1' + ' ' + data['price'].toStringAsFixed(2)),
+                    ],
+                  ),
                   trailing: InkWell(
                     onTap: () {
                       Navigator.push(
@@ -62,8 +88,8 @@ class FoodDeliveryMyProduct extends StatelessWidget {
                                         data['imgUrl'],
                                         data['price'],
                                         data['stock'],
-                                    data['% off'],
-                                    data['discounted price']),
+                                        data['% off'],
+                                        data['discounted price']),
                                   )));
                     },
                     child: TextButton(

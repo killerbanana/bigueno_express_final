@@ -7,6 +7,7 @@ import 'package:spinner_input/spinner_input.dart';
 
 class ProductList extends StatefulWidget {
   final String storeId;
+  final String storeName;
   final String docId;
   final String productName;
   final String imgUrl;
@@ -22,7 +23,7 @@ class ProductList extends StatefulWidget {
       this.imgUrl,
       this.percentOff,
       this.price,
-      this.discountedPrice})
+      this.discountedPrice, this.storeName})
       : super(key: key);
 
   @override
@@ -105,6 +106,7 @@ class _ProductListState extends State<ProductList> {
 
                     dynamic result = await _firebaseServices.addToCart(
                         user.uid,
+                        widget.storeName,
                         widget.storeId,
                         widget.docId,
                         widget.productName,

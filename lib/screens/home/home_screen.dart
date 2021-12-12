@@ -449,11 +449,6 @@ class DrawerOriginal extends StatelessWidget {
                   ),
                 ),
                 ProfileButton(
-                  title: "Profile Management",
-                  color: Colors.black87,
-                  icon: Icons.account_circle,
-                ),
-                ProfileButton(
                   title: "My Orders",
                   color: Colors.black87,
                   icon: CupertinoIcons.list_dash,

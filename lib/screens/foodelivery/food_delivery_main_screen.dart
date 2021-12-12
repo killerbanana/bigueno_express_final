@@ -6,16 +6,15 @@ import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:spinner_input/spinner_input.dart';
 
 class FoodDeliveryMainScreen extends StatefulWidget {
   final String storeId;
+  final String storeName;
   static String routeName = "/food_delivery_main_screen";
 
-  const FoodDeliveryMainScreen({Key key, this.storeId}) : super(key: key);
+  const FoodDeliveryMainScreen({Key key, this.storeId, this.storeName}) : super(key: key);
   @override
   _FooDeliveryMainScreenState createState() => _FooDeliveryMainScreenState();
 }
@@ -26,10 +25,16 @@ class _FooDeliveryMainScreenState extends State<FoodDeliveryMainScreen> {
 
   double price;
   double quantity;
-
+  String storeName;
   bool loading = false;
 
   String currentStore;
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +100,7 @@ class _FooDeliveryMainScreenState extends State<FoodDeliveryMainScreen> {
                   }
                   Map<String, dynamic> data =
                       snapshot.data.data() as Map<String, dynamic>;
+
                   return FlexibleSpaceBar(
                     centerTitle: true,
                     title: Text(data['Shop Name']),
@@ -180,6 +186,7 @@ class _FooDeliveryMainScreenState extends State<FoodDeliveryMainScreen> {
                 }),
           ),
           StoreList(
+            storeName: widget.storeName,
             storeId: widget.storeId,
           )
         ],

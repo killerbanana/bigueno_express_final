@@ -48,11 +48,19 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => print("Failed to send message: $error"));
   }
 
-  Future addOrder(String uid, String sellerId, List<dynamic> myCart,
-      String devAddress, String name, String contactNumber, double total) {
+  Future addOrder(
+      String storeName,
+      String uid,
+      String sellerId,
+      List<dynamic> myCart,
+      String devAddress,
+      String name,
+      String contactNumber,
+      double total) {
     return orders
         .doc()
         .set({
+          "store name": storeName,
           "date": DateTime.now(),
           "uid": uid,
           "seller": sellerId,
@@ -63,17 +71,84 @@ class FirebaseServices extends ChangeNotifier {
           "contact number": contactNumber,
           "total": total
         })
-        .then((value) => print("Message Sent"))
-        .catchError((error) => print("Failed to send message: $error"));
+        .then((value) => print("Order created"))
+        .catchError((error) => print("Failed to create order: $error"));
   }
 
-  Future addToCart(String uid, String sellerId, String productId,
-      String productName, double productPrice, int quantity, String imageUrl) {
+  Future confirmOrder(String uid) {
+    return orders
+        .doc(uid)
+        .update({
+          "date": DateTime.now(),
+          "status": "For Confirmation Delivery",
+        })
+        .then((value) => print("Order Confirmed"))
+        .catchError((error) => print("Failed to confirm order: $error"));
+  }
+
+  Future confirmOrderForDelivery(String uid, String riderId) {
+    return orders
+        .doc(uid)
+        .update({
+          "date": DateTime.now(),
+          "status": "For Delivery",
+          "rider id": riderId
+        })
+        .then((value) => print("Order Confirmed"))
+        .catchError((error) => print("Failed to confirm order: $error"));
+  }
+
+  Future confirmOrderReceived(String uid) {
+    return orders
+        .doc(uid)
+        .update({"status": "Completed", "date delivered": DateTime.now()})
+        .then((value) => print("Order Completed"))
+        .catchError((error) => print("Failed to confirm order: $error"));
+  }
+
+  Future confirmOrderCancelled(String uid) {
+    return orders
+        .doc(uid)
+        .update({"status": "Cancelled", "date delivered": DateTime.now()})
+        .then((value) => print("Order Completed"))
+        .catchError((error) => print("Failed to confirm order: $error"));
+  }
+
+  Future statusUpdate(String uid) {
+    return partner
+        .doc(uid)
+        .update({
+          "Status": "Driving",
+        })
+        .then((value) => print("Status Updated"))
+        .catchError((error) => print("Failed to update status: $error"));
+  }
+
+  Future statusUpdate2(String uid) {
+    return partner
+        .doc(uid)
+        .update({
+          "Status": "Online",
+        })
+        .then((value) => print("Status Updated"))
+        .catchError((error) => print("Failed to update status: $error"));
+  }
+
+  Future addToCart(
+      String uid,
+      String storeName,
+      String sellerId,
+      String productId,
+      String productName,
+      double productPrice,
+      int quantity,
+      String imageUrl) {
     return cart
         .doc(uid)
         .collection('cart')
         .doc(productId)
         .set({
+          "store name": storeName,
           "seller": sellerId,
           "product name": productName,
           "product image": imageUrl,
@@ -372,5 +447,14 @@ class FirebaseServices extends ChangeNotifier {
         new Partners("Rider", shopName, openingHours, address, false, uid);
     notifyListeners();
     return notifyListeners();
+  }
+
+  final _collection = FirebaseFirestore.instance.collection('orders');
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> snapshots(String uid) {
+    return _collection
+        .where('seller', isEqualTo: uid)
+        .where('status', isEqualTo: 'Completed')
+        .snapshots();
   }
 }

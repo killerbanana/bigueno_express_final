@@ -1,11 +1,16 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_add_product.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_my_product.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_sales_history.dart';
+import 'package:biguenoexpress/screens/foodelivery/order_status/food_delivery_completed.dart';
+import 'package:biguenoexpress/screens/foodelivery/order_status/food_delivery_for_delivery.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+
+import 'order_status/food_delivery_for_confirmation.dart';
 
 // ignore: must_be_immutable
 class FoodDeliveryProfile extends StatelessWidget {
@@ -95,6 +100,12 @@ class FoodDeliveryProfile extends StatelessWidget {
                     ),
                     Divider(),
                     SellerProfileButton(
+                      press: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => FoodDeliverySalesHistory(uid: user.uid)),
+                        );
+                      },
                       title: "My Sales",
                       isNew: false,
                       iconColor: Colors.blueAccent,
@@ -110,16 +121,25 @@ class FoodDeliveryProfile extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           SalesActionButton(
-                            iconData: CupertinoIcons.cube_box,
-                            title: "To Deliver",
+                            press: (){
+                              Navigator.pushNamed(context, FoodDeliveryForConfirmation.routeName);
+                            },
+                            iconData: CupertinoIcons.check_mark,
+                            title: "For Confirmation",
                           ),
                           SalesActionButton(
-                            iconData: CupertinoIcons.delete_right,
-                            title: "Cancelled",
+                            press: () {
+                              Navigator.pushNamed(context, FoodDeliveryForDelivery.routeName);
+                            },
+                            iconData: CupertinoIcons.cube_box_fill,
+                            title: "For Delivery",
                           ),
                           SalesActionButton(
-                            iconData: CupertinoIcons.bars,
-                            title: "More",
+                            press: () {
+                              Navigator.pushNamed(context, FoodDeliveryCompleted.routeName);
+                            },
+                            iconData: FontAwesomeIcons.flag,
+                            title: "Completed",
                           ),
                         ],
                       ),
@@ -147,14 +167,6 @@ class FoodDeliveryProfile extends StatelessWidget {
                             context, FoodDeliveryAddProduct.routeName);
                       },
                     ),
-                    Divider(),
-                    SellerProfileButton(
-                      title: "View My Shop",
-                      isNew: false,
-                      iconColor: Colors.redAccent,
-                      iconData: CupertinoIcons.eye,
-                      subTitle: "biguenoexpress.ph/josh.rosqueta",
-                    ),
                   ],
                 ),
               );
@@ -170,16 +182,17 @@ class SalesActionButton extends StatelessWidget {
   const SalesActionButton({
     Key key,
     this.title,
-    this.iconData,
+    this.iconData, this.press,
   }) : super(key: key);
 
   final String title;
   final IconData iconData;
+  final Function press;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: press,
       child: Column(
         children: [
           Icon(

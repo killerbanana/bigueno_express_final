@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import 'food_delivery_cart.dart';
 
+// ignore: must_be_immutable
 class FoodDelivery extends StatelessWidget {
   static String routeName = "/food_delivery";
   Users user;
@@ -92,15 +93,6 @@ class FoodDelivery extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              CupertinoSearchTextField(
-                placeholder: 'Search for Shops and Restaurants',
-                onChanged: (String value) {
-                  print('The text has changed to: $value');
-                },
-                onSubmitted: (String value) {
-                  print('Submitted text: $value');
-                },
-              ),
               Row(
                 children: [
                   Expanded(
@@ -149,6 +141,7 @@ class FoodDelivery extends StatelessWidget {
                                 MaterialPageRoute(
                                     builder: (context) => FoodDeliveryMainScreen(
                                       storeId: document.id,
+                                      storeName: data['Shop Name'],
                                     )),
                               );
                             },
