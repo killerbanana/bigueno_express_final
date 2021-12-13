@@ -1,3 +1,4 @@
+import 'package:biguenoexpress/screens/chat/send_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PawIt extends StatelessWidget {
   static String routeName = "/paw_it";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,15 +31,25 @@ class PawIt extends StatelessWidget {
                   print('Submitted text: $value');
                 },
               ), */
-              SizedBox(height: 20,),
-              Text('Available Riders', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Available Riders',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('partner')
-                    .where('Category', isEqualTo: "Rider").where('Status', isEqualTo: "Online").where('Verified', isEqualTo: true)
+                    .where('Category', isEqualTo: "Rider")
+                    .where('Status', isEqualTo: "Online")
+                    .where('Verified', isEqualTo: true)
                     .snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return Text('Something went wrong');
                   }
@@ -48,8 +60,10 @@ class PawIt extends StatelessWidget {
 
                   return ListView(
                     shrinkWrap: true,
-                    children: snapshot.data.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                    children:
+                        snapshot.data.docs.map((DocumentSnapshot document) {
+                      Map<String, dynamic> data =
+                          document.data() as Map<String, dynamic>;
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
@@ -68,8 +82,9 @@ class PawIt extends StatelessWidget {
                                       height: 80,
                                       width: 80,
                                       decoration: BoxDecoration(
-                                          image: DecorationImage(image: NetworkImage(data['Img Url']))
-                                      ),
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                  data['Img Url']))),
                                     ),
                                     RatingBarIndicator(
                                       rating: 5,
@@ -87,23 +102,52 @@ class PawIt extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(data['Shop Name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                  Text(
+                                    data['Shop Name'],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
                                   Row(
                                     children: [
-                                      Icon(Icons.location_on, color: Colors.blue, size: 16,),
-                                      Text(data['Address'], style: TextStyle(fontWeight: FontWeight.w300),),
+                                      Icon(
+                                        Icons.location_on,
+                                        color: Colors.blue,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        data['Address'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.circle, color: Colors.green, size: 16,),
-                                      Text(data['Status'], style: TextStyle(fontWeight: FontWeight.w300),),
+                                      Icon(
+                                        Icons.circle,
+                                        color: Colors.green,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        data['Status'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.phone, color: Colors.blue, size: 16,),
-                                      Text(data['Contact Number'], style: TextStyle(fontWeight: FontWeight.w300),),
+                                      Icon(
+                                        Icons.phone,
+                                        color: Colors.blue,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        data['Contact Number'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -117,7 +161,20 @@ class PawIt extends StatelessWidget {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     children: [
-                                      Icon(CupertinoIcons.chat_bubble),
+                                      GestureDetector(
+                                        child: Icon(CupertinoIcons.chat_bubble),
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => SendMessage(
+                                                receiverId: document.id,
+                                                receiverName: data['Shop Name'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -130,16 +187,28 @@ class PawIt extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 20,),
-              Divider(thickness: 5,),
-              Text('Currently Not Available', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
+              Divider(
+                thickness: 5,
+              ),
+              Text(
+                'Currently Not Available',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('partner')
-                    .where('Category', isEqualTo: "Rider").where('Status', isEqualTo: "Driving").where('Verified', isEqualTo: true)
+                    .where('Category', isEqualTo: "Rider")
+                    .where('Status', isEqualTo: "Driving")
+                    .where('Verified', isEqualTo: true)
                     .snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return Text('Something went wrong');
                   }
@@ -150,8 +219,10 @@ class PawIt extends StatelessWidget {
 
                   return ListView(
                     shrinkWrap: true,
-                    children: snapshot.data.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                    children:
+                        snapshot.data.docs.map((DocumentSnapshot document) {
+                      Map<String, dynamic> data =
+                          document.data() as Map<String, dynamic>;
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
@@ -170,8 +241,9 @@ class PawIt extends StatelessWidget {
                                       height: 80,
                                       width: 80,
                                       decoration: BoxDecoration(
-                                          image: DecorationImage(image: NetworkImage(data['Img Url']))
-                                      ),
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                  data['Img Url']))),
                                     ),
                                     RatingBarIndicator(
                                       rating: 5,
@@ -189,23 +261,52 @@ class PawIt extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(data['Shop Name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                  Text(
+                                    data['Shop Name'],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
                                   Row(
                                     children: [
-                                      Icon(Icons.location_on, color: Colors.blue, size: 16,),
-                                      Text(data['Address'], style: TextStyle(fontWeight: FontWeight.w300),),
+                                      Icon(
+                                        Icons.location_on,
+                                        color: Colors.blue,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        data['Address'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.circle, color: Colors.orange, size: 16,),
-                                      Text(data['Status'], style: TextStyle(fontWeight: FontWeight.w300),),
+                                      Icon(
+                                        Icons.circle,
+                                        color: Colors.orange,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        data['Status'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.phone, color: Colors.blue, size: 16,),
-                                      Text(data['Contact Number'], style: TextStyle(fontWeight: FontWeight.w300),),
+                                      Icon(
+                                        Icons.phone,
+                                        color: Colors.blue,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        data['Contact Number'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -219,8 +320,20 @@ class PawIt extends StatelessWidget {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     children: [
-                                      Icon(CupertinoIcons.chat_bubble),
-                                      Text('Chat'),
+                                      GestureDetector(
+                                        child: Icon(CupertinoIcons.chat_bubble),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => SendMessage(
+                                                receiverId: document.id,
+                                                receiverName: data['Shop Name'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
