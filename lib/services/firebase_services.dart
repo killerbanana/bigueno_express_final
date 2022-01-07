@@ -296,7 +296,7 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => "error: $error");
   }
 
-  Future addMarketRating(String uid, String sellerId, double rating, String comment) {
+  Future addMarketRating(String uid, String sellerId, double rating, String comment, String name) {
     return ratings
         .doc()
         .set({
@@ -304,6 +304,7 @@ class FirebaseServices extends ChangeNotifier {
       "seller id": sellerId,
       "rating": rating,
       "comment": comment,
+      "name": name
     })
         .then((value) => "Rating added")
         .catchError((error) => "error: $error");
@@ -500,7 +501,7 @@ class FirebaseServices extends ChangeNotifier {
           'Set up': false,
           'Contact Number': contact,
           'Status': status,
-          "Img Url": imgUrl,
+          "Image url": imgUrl,
           "Verified": false
         })
         .then((value) => print("Rider Added"))

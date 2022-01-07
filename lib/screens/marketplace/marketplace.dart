@@ -1,5 +1,6 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/send_message.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it.dart';
 import 'package:biguenoexpress/screens/reviews/marketplace/marketplace_write_review.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -222,7 +223,12 @@ class _MarketPlaceState extends State<MarketPlace> {
                           ),
                           InkWell(
                             splashColor: Colors.greenAccent,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PawIt()),
+                              );
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),

@@ -1,4 +1,5 @@
 import 'package:biguenoexpress/models/users.dart';
+import 'package:biguenoexpress/screens/chat/send_message.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -157,6 +158,31 @@ class _PawItForConfirmationDeliveryState extends State<PawItForConfirmationDeliv
                                     ),
                                     child: Text(
                                       'ACCEPT ORDER',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      // await _firebaseServices.confirmOrderForDelivery(document.id, user.uid);
+                                      // await _firebaseServices.statusUpdate(user.uid);
+                                      // Fluttertoast.showToast(
+                                      //     msg: 'Order Accepted!');
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SendMessage(
+                                              receiverId: '${data['uid']}',
+                                              receiverName: '${data['name']}'),
+                                        ),
+                                      );
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                      MaterialStateProperty.all(
+                                          Colors.blueAccent),
+                                    ),
+                                    child: Text(
+                                      'CONTACT BUYER',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),

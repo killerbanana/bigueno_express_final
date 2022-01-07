@@ -46,11 +46,31 @@ class ChatScreen extends StatelessWidget {
                   );
                 },
                 child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: NetworkImage(
-                        "https://cdn.iconscout.com/icon/free/png-256/account-avatar-profile-human-man-user-30448.png"),
-                  ),
+                  leading: FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection('partner')
+                          .doc(document.id)
+                          .get(),
+                      builder: (context,
+                          AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                              snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done &&
+                            snapshot.hasData) {
+                          if (!snapshot.data.exists) {
+                            return CircleAvatar(
+                              radius: 24.0,
+                              backgroundImage: NetworkImage(
+                                  "https://cdn.iconscout.com/icon/free/png-256/account-avatar-profile-human-man-user-30448.png"),
+                            );
+                          }
+                          return CircleAvatar(
+                            radius: 24.0,
+                            backgroundImage:
+                                NetworkImage(snapshot.data['Image url']),
+                          );
+                        }
+                        return CircularProgressIndicator();
+                      }),
                   title: Text(
                     data['name'].toString(),
                     style: TextStyle(
