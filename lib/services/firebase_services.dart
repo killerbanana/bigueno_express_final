@@ -1,5 +1,6 @@
 import 'package:biguenoexpress/models/cart.dart';
 import 'package:biguenoexpress/models/partners.dart';
+import 'package:biguenoexpress/models/reviews.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -23,8 +24,13 @@ class FirebaseServices extends ChangeNotifier {
   CollectionReference product =
       FirebaseFirestore.instance.collection('products');
 
+  CollectionReference ratings =
+  FirebaseFirestore.instance.collection('ratings');
+
   Partners myPartner;
   String category = "";
+
+  Map <String, dynamic> _reviews;
 
   Partners get partners {
     return myPartner;
@@ -167,7 +173,8 @@ class FirebaseServices extends ChangeNotifier {
           "product image": imageUrl,
           "quantity": quantity,
           "price": productPrice,
-          "date added": DateTime.now()
+          "date added": DateTime.now(),
+      "product id" : productId
         })
         .then((value) => print("Added to Cart"))
         .catchError((error) => print("Failed to add to cart: $error"));
@@ -289,6 +296,87 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => "error: $error");
   }
 
+  Future addMarketRating(String uid, String sellerId, double rating, String comment) {
+    return ratings
+        .doc()
+        .set({
+      "user id": uid,
+      "seller id": sellerId,
+      "rating": rating,
+      "comment": comment,
+    })
+        .then((value) => "Rating added")
+        .catchError((error) => "error: $error");
+  }
+
+
+
+  Future updateMarketRating(String uid, String sellerId, double rating, String comment) async{
+     await FirebaseFirestore.instance
+        .collection('ratings').where("seller id", isEqualTo: sellerId).where("user id", isEqualTo: uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        ratings.doc(doc.id).update({
+          "user id": uid,
+          "seller id": sellerId,
+          "rating": rating,
+          "comment": comment,
+        })
+            .then((value) => "Rating updated")
+            .catchError((error) => "error: $error");
+      });
+    });
+  }
+
+  Future checkIfReview(String uid, String sellerId) async{
+    await FirebaseFirestore.instance
+        .collection('ratings').where("seller id", isEqualTo: sellerId).where("user id", isEqualTo: uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        _reviews = doc.data();
+      });
+    });
+    return _reviews;
+  }
+
+  Future checkStoreReview(String sellerId) async{
+    double rating = 0;
+    await FirebaseFirestore.instance
+        .collection('ratings').where("seller id", isEqualTo: sellerId)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        rating = rating + doc['rating'];
+        print(doc['rating']);
+      });
+      rating = rating / querySnapshot.size;
+    });
+
+    await FirebaseFirestore.instance
+        .collection('partner')
+        .doc(sellerId).update({
+      "Rating": rating
+    });
+
+    return rating;
+  }
+
+  Future <int> checkStock(String productId) async{
+    int x;
+     await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        x = documentSnapshot['stock'];
+      }
+    });
+      return x;
+  }
+
   Future updateProductFoodDelivery(
       String uid,
       String name,
@@ -314,6 +402,18 @@ class FirebaseServices extends ChangeNotifier {
           "date updated": DateTime.now(),
           "discounted price": discountedPrice,
         })
+        .then((value) => "Product updated")
+        .catchError((error) => "error: $error");
+  }
+
+  Future updateStockFoodDelivery(
+      int stock,
+      String productId,) {
+    return product
+        .doc(productId)
+        .update({
+      "stock": stock,
+    })
         .then((value) => "Product updated")
         .catchError((error) => "error: $error");
   }

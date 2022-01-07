@@ -5,6 +5,7 @@ class Cart{
   final double qty;
   final String sellerId;
   final double total;
+  final String productId;
 
-  Cart(this.price, this.imgUrl, this.productName, this.qty, this.sellerId, this.total);
+  Cart(this.price, this.imgUrl, this.productName, this.qty, this.sellerId, this.total, this.productId);
 }

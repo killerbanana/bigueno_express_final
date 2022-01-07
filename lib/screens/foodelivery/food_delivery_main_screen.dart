@@ -1,6 +1,7 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_cart.dart';
 import 'package:biguenoexpress/screens/foodelivery/widget/storelist.dart';
+import 'package:biguenoexpress/screens/reviews/marketplace/marketplace_write_review.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -143,39 +144,47 @@ class _FooDeliveryMainScreenState extends State<FoodDeliveryMainScreen> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        CupertinoIcons.star_fill,
-                                        color: Colors.white,
-                                        size: 16,
-                                      ),
-                                      data['Rating'] == 0
-                                          ? Text('No Rating',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w300))
-                                          : Text(
-                                              '4.6',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                      data['Rating'] == 0
-                                          ? Text('')
-                                          : Text(
-                                              ' ( 21 ) ',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w300),
-                                            )
-                                    ],
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => MarketPlaceWriteReview(sellerId: widget.storeId,)),
+                                      );
+                                    },
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.star_fill,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                        data['Rating'] == 0
+                                            ? Text('No Rating',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w300))
+                                            : Text(
+                                                data['Rating'].toString(),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w300),
+                                              ),
+                                        data['Rating'] == 0
+                                            ? Text('')
+                                            : Text(
+                                                ' ',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w300),
+                                              )
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),

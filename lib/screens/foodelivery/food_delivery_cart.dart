@@ -43,7 +43,7 @@ class _FoodDeliveryCartState extends State<FoodDeliveryCart> {
         _storeName = doc['store name'];
         total = total + (doc['price'].toDouble() * doc['quantity']);
         cart.add(new Cart(doc['price'].toDouble(), doc['product image'],
-            doc['product name'], doc['quantity'].toDouble(), doc['seller'], total));
+            doc['product name'], doc['quantity'].toDouble(), doc['seller'], total, doc['product id']));
       });
       maxTotal = total + 50;
     });
@@ -101,45 +101,6 @@ class _FoodDeliveryCartState extends State<FoodDeliveryCart> {
                                     fit: BoxFit.fill,
                                   ),
                                   shape: BoxShape.circle,
-                                ),
-                              ),
-                              trailing: Container(
-                                child: SpinnerInput(
-                                  minValue: 0,
-                                  maxValue: 200,
-                                  step: 1,
-                                  plusButton: SpinnerButtonStyle(
-                                      elevation: 0,
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(0)),
-                                  minusButton: SpinnerButtonStyle(
-                                      elevation: 0,
-                                      color: Colors.blueAccent,
-                                      borderRadius: BorderRadius.circular(0)),
-                                  middleNumberWidth: 30,
-                                  disabledPopup: true,
-                                  disabledLongPress: true,
-                                  middleNumberStyle: TextStyle(fontSize: 16),
-                                  middleNumberBackground:
-                                  Colors.yellowAccent.withOpacity(0.5),
-                                  spinnerValue: data['quantity'].toDouble(),
-                                  onChange: (newValue) async {
-                                    quantity = data['quantity'].toDouble();
-                                    if (newValue == 0) {
-                                      dynamic result =
-                                      await _firebaseServices.deleteCart(
-                                          user.uid, data['seller'], document.id);
-                                    } else {
-                                      dynamic result =
-                                      await _firebaseServices.updateCart(
-                                          user.uid,
-                                          data['seller'],
-                                          document.id,
-                                          data['product name'],
-                                          newValue);
-                                    }
-                                    setState(() {});
-                                  },
                                 ),
                               ),
                               subtitle: Text(
