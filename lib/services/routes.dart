@@ -25,6 +25,7 @@ import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_delivery.da
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_deliver_history.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
+import 'package:biguenoexpress/screens/reviews/marketplace/marketplace_write_review.dart';
 import 'package:flutter/widgets.dart';
 import 'wrapper.dart';
 
@@ -57,4 +58,5 @@ final Map<String, WidgetBuilder> routes = {
   PawItForDelivery.routeName: (context) => PawItForDelivery(),
   PawItCompletedDelivery.routeName: (context) => PawItCompletedDelivery(),
   PawItDeliverHistory.routeName: (context) => PawItDeliverHistory(),
+  MarketPlaceWriteReview.routeName: (context) => MarketPlaceWriteReview(),
 };

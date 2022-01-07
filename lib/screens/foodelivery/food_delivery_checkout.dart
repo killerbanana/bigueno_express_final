@@ -49,6 +49,7 @@ class _FoodDeliveryCheckoutState extends State<FoodDeliveryCheckout> {
         "imgUrl": element.imgUrl,
         "qty": element.qty,
         "product name": element.productName,
+        "product id": element.productId
       });
       print(orders);
     });
@@ -200,6 +201,13 @@ class _FoodDeliveryCheckoutState extends State<FoodDeliveryCheckout> {
                                 widget.total);
 
                             await _firebaseServices.deleteEntireCart(user.uid);
+
+                            orders.forEach((element) async{
+                              print(element['product id']);
+                              int stock = await _firebaseServices.checkStock(element['product id']);
+                              await _firebaseServices.updateStockFoodDelivery(stock - element['qty'].toInt(), element['product id']);
+                            });
+
 
                             loading = false;
                             setState(() {});

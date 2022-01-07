@@ -112,86 +112,96 @@ class _StoreListState extends State<StoreList> {
                                           )),
                                 ],
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  data['% off'] == 0
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10, left: 8),
-                                          child: Container(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                '\u20B1 ${data['price'].toStringAsFixed(2)}',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                          ),
-                                        )
-                                      : Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10, left: 8),
-                                          child: Container(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Row(
-                                                children: [
-                                                  Text(
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10, bottom: 10),
+                                    child: Text(' Stock: ${data['stock'].toString()}', style: TextStyle(color: Colors.white),),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      data['% off'] == 0
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10, left: 8),
+                                              child: Container(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
                                                     '\u20B1 ${data['price'].toStringAsFixed(2)}',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .lineThrough,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text(
-                                                    '\u20B1 ${data['discounted price'].toStringAsFixed(2)}',
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                ],
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(20)),
+                                              ),
+                                            )
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10, left: 8),
+                                              child: Container(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        '\u20B1 ${data['price'].toStringAsFixed(2)}',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .lineThrough,
+                                                            fontWeight:
+                                                                FontWeight.w300),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Text(
+                                                        '\u20B1 ${data['discounted price'].toStringAsFixed(2)}',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(20)),
                                               ),
                                             ),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                          ),
-                                        ),
-                                  ProductList(
-                                    storeName: widget.storeName,
-                                    docId: document.id,
-                                    storeId: widget.storeId,
-                                    productName: data['product name'],
-                                    imgUrl: data['imgUrl'],
-                                    percentOff: data['% off'],
-                                    price: data['price'].toDouble(),
-                                    discountedPrice:
-                                        data['discounted price'].toDouble(),
-                                  )
+                                      ProductList(
+                                        storeName: widget.storeName,
+                                        docId: document.id,
+                                        storeId: widget.storeId,
+                                        stock: data['stock'],
+                                        productName: data['product name'],
+                                        imgUrl: data['imgUrl'],
+                                        percentOff: data['% off'],
+                                        price: data['price'].toDouble(),
+                                        discountedPrice:
+                                            data['discounted price'].toDouble(),
+                                      )
+                                    ],
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),

@@ -2,6 +2,7 @@ import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spinner_input/spinner_input.dart';
 
@@ -12,6 +13,7 @@ class ProductList extends StatefulWidget {
   final String productName;
   final String imgUrl;
   final int percentOff;
+  final int stock;
   final double price;
   final double discountedPrice;
 
@@ -23,7 +25,7 @@ class ProductList extends StatefulWidget {
       this.imgUrl,
       this.percentOff,
       this.price,
-      this.discountedPrice, this.storeName})
+      this.discountedPrice, this.storeName, this.stock})
       : super(key: key);
 
   @override
@@ -43,7 +45,24 @@ class _ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     this.user = Provider.of<Users>(context);
-    return loading
+    return widget.stock == 0 ?  Padding(
+      padding: const EdgeInsets.only(bottom: 10, right: 10),
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Out of Stock',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(20)),
+      ),
+    ) :
+     loading
         ? Padding(
             padding: const EdgeInsets.only(bottom: 10, right: 10),
             child: Container(
@@ -154,12 +173,18 @@ class _ProductListState extends State<ProductList> {
                           dynamic result = await _firebaseServices.deleteCart(
                               user.uid, widget.storeId, widget.docId);
                         } else {
-                          dynamic result = await _firebaseServices.updateCart(
-                              user.uid,
-                              widget.storeId,
-                              widget.docId,
-                              widget.productName,
-                              newValue);
+                          if(newValue > widget.stock){
+                            Fluttertoast.showToast(msg: "Error not enough stock", backgroundColor: Colors.red);
+                          }
+                          else{
+                            dynamic result = await _firebaseServices.updateCart(
+                                user.uid,
+                                widget.storeId,
+                                widget.docId,
+                                widget.productName,
+                                newValue);
+                          }
+
                         }
                         setState(() {
                           loading = false;

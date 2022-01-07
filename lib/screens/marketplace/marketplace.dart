@@ -1,5 +1,6 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/send_message.dart';
+import 'package:biguenoexpress/screens/reviews/marketplace/marketplace_write_review.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -244,8 +245,14 @@ class _MarketPlaceState extends State<MarketPlace> {
                         ],
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
+                      TextButton(onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MarketPlaceWriteReview(sellerId: _sellerId[index],)),
+                        );
+                      }, child: Text('Write a Review')),
                       Divider(
                         thickness: 10,
                       )
