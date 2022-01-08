@@ -1,4 +1,6 @@
 import 'package:biguenoexpress/models/users.dart';
+import 'package:biguenoexpress/screens/home/order_status/add_rider_rating.dart';
+import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +13,8 @@ class Completed extends StatefulWidget {
 class _CompletedState extends State<Completed> {
   Users user;
   List<dynamic> cart = [];
+
+  FirebaseServices _firebaseServices = FirebaseServices();
   @override
   Widget build(BuildContext context) {
     this.user = Provider.of<Users>(context);
@@ -73,7 +77,40 @@ class _CompletedState extends State<Completed> {
                               ],
                               mainAxisAlignment: MainAxisAlignment.end,
                             ),
-                          )
+                          ),
+                          FutureBuilder(
+                            future: _firebaseServices.checkRiderRating(document.id),
+                            builder: (context, snapshot) {
+                              if(snapshot.connectionState == ConnectionState.done && !snapshot.data){
+                                return TextButton(
+                                  onPressed: () async {
+                                    print(data['rider id']);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddRiderRating(
+                                                riderId: data['rider id'],
+                                                transactionId: document.id,
+                                              )),
+                                    );
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                    MaterialStateProperty.all(
+                                        Colors.blueAccent),
+                                  ),
+                                  child: Text(
+                                    'RATE RIDER',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                );
+                              }if(snapshot.connectionState == ConnectionState.done && snapshot.hasData){
+                                return Text('RATING SUBMITTED');
+                              }
+                              return Container();
+                            }
+                          ),
                         ],
                       ),
                     ),

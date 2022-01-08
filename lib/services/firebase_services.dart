@@ -25,12 +25,12 @@ class FirebaseServices extends ChangeNotifier {
       FirebaseFirestore.instance.collection('products');
 
   CollectionReference ratings =
-  FirebaseFirestore.instance.collection('ratings');
+      FirebaseFirestore.instance.collection('ratings');
 
   Partners myPartner;
   String category = "";
 
-  Map <String, dynamic> _reviews;
+  Map<String, dynamic> _reviews;
 
   Partners get partners {
     return myPartner;
@@ -96,11 +96,11 @@ class FirebaseServices extends ChangeNotifier {
     return orders
         .doc(uid)
         .update({
-      "date": DateTime.now(),
-      "status": "For Delivery",
-      "rider status": "For Delivery",
-      "rider id": riderId
-    })
+          "date": DateTime.now(),
+          "status": "For Delivery",
+          "rider status": "For Delivery",
+          "rider id": riderId
+        })
         .then((value) => print("Order Confirmed"))
         .catchError((error) => print("Failed to confirm order: $error"));
   }
@@ -109,10 +109,10 @@ class FirebaseServices extends ChangeNotifier {
     return orders
         .doc(uid)
         .update({
-      "date": DateTime.now(),
-      "rider status": "Delivered",
-      "rider id": riderId
-    })
+          "date": DateTime.now(),
+          "rider status": "Delivered",
+          "rider id": riderId
+        })
         .then((value) => print("Order Confirmed"))
         .catchError((error) => print("Failed to confirm order: $error"));
   }
@@ -174,7 +174,7 @@ class FirebaseServices extends ChangeNotifier {
           "quantity": quantity,
           "price": productPrice,
           "date added": DateTime.now(),
-      "product id" : productId
+          "product id": productId
         })
         .then((value) => print("Added to Cart"))
         .catchError((error) => print("Failed to add to cart: $error"));
@@ -296,43 +296,79 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => "error: $error");
   }
 
-  Future addMarketRating(String uid, String sellerId, double rating, String comment, String name) {
+  Future addMarketRating(
+      String uid, String sellerId, double rating, String comment, String name) {
     return ratings
         .doc()
         .set({
-      "user id": uid,
-      "seller id": sellerId,
-      "rating": rating,
-      "comment": comment,
-      "name": name
-    })
-        .then((value) => "Rating added")
-        .catchError((error) => "error: $error");
-  }
-
-
-
-  Future updateMarketRating(String uid, String sellerId, double rating, String comment) async{
-     await FirebaseFirestore.instance
-        .collection('ratings').where("seller id", isEqualTo: sellerId).where("user id", isEqualTo: uid)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        ratings.doc(doc.id).update({
           "user id": uid,
           "seller id": sellerId,
           "rating": rating,
           "comment": comment,
+          "name": name
         })
+        .then((value) => "Rating added")
+        .catchError((error) => "error: $error");
+  }
+
+  Future addRiderRating(String uid, String sellerId, double rating,
+      String comment, String name, String transactionID) {
+    return ratings
+        .doc(transactionID)
+        .set({
+          "user id": uid,
+          "seller id": sellerId,
+          "rating": rating,
+          "comment": comment,
+          "name": name,
+          "transaction Id": transactionID,
+        })
+        .then((value) => "Rating added")
+        .catchError((error) => "error: $error");
+  }
+
+  Future<bool> checkRiderRating(String transactionId) async {
+    bool exist = false;
+    await FirebaseFirestore.instance
+        .collection('ratings')
+        .doc(transactionId)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        exist = true;
+      }
+    });
+    return exist;
+  }
+
+  Future updateMarketRating(
+      String uid, String sellerId, double rating, String comment) async {
+    await FirebaseFirestore.instance
+        .collection('ratings')
+        .where("seller id", isEqualTo: sellerId)
+        .where("user id", isEqualTo: uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        ratings
+            .doc(doc.id)
+            .update({
+              "user id": uid,
+              "seller id": sellerId,
+              "rating": rating,
+              "comment": comment,
+            })
             .then((value) => "Rating updated")
             .catchError((error) => "error: $error");
       });
     });
   }
 
-  Future checkIfReview(String uid, String sellerId) async{
+  Future checkIfReview(String uid, String sellerId) async {
     await FirebaseFirestore.instance
-        .collection('ratings').where("seller id", isEqualTo: sellerId).where("user id", isEqualTo: uid)
+        .collection('ratings')
+        .where("seller id", isEqualTo: sellerId)
+        .where("user id", isEqualTo: uid)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
@@ -342,31 +378,30 @@ class FirebaseServices extends ChangeNotifier {
     return _reviews;
   }
 
-  Future checkStoreReview(String sellerId) async{
+  Future checkStoreReview(String sellerId) async {
     double rating = 0;
     await FirebaseFirestore.instance
-        .collection('ratings').where("seller id", isEqualTo: sellerId)
+        .collection('ratings')
+        .where("seller id", isEqualTo: sellerId)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         rating = rating + doc['rating'];
-        print(doc['rating']);
       });
       rating = rating / querySnapshot.size;
     });
 
     await FirebaseFirestore.instance
         .collection('partner')
-        .doc(sellerId).update({
-      "Rating": rating
-    });
+        .doc(sellerId)
+        .update({"Rating": rating});
 
     return rating;
   }
 
-  Future <int> checkStock(String productId) async{
+  Future<int> checkStock(String productId) async {
     int x;
-     await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('products')
         .doc(productId)
         .get()
@@ -375,7 +410,7 @@ class FirebaseServices extends ChangeNotifier {
         x = documentSnapshot['stock'];
       }
     });
-      return x;
+    return x;
   }
 
   Future updateProductFoodDelivery(
@@ -408,13 +443,27 @@ class FirebaseServices extends ChangeNotifier {
   }
 
   Future updateStockFoodDelivery(
-      int stock,
-      String productId,) {
+    int stock,
+    String productId,
+  ) {
     return product
         .doc(productId)
         .update({
-      "stock": stock,
-    })
+          "stock": stock,
+        })
+        .then((value) => "Product updated")
+        .catchError((error) => "error: $error");
+  }
+
+  Future updateMarketCaption(
+    String sellerId,
+    String caption,
+  ) {
+    return partner
+        .doc(sellerId)
+        .update({
+          "Short desc": caption,
+        })
         .then((value) => "Product updated")
         .catchError((error) => "error: $error");
   }
@@ -502,7 +551,8 @@ class FirebaseServices extends ChangeNotifier {
           'Contact Number': contact,
           'Status': status,
           "Image url": imgUrl,
-          "Verified": false
+          "Verified": false,
+          'Rating': 0
         })
         .then((value) => print("Rider Added"))
         .catchError((error) => print("Failed to add Rider: $error"));

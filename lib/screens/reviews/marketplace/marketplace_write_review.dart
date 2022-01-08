@@ -21,7 +21,7 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
   FirebaseServices _firebaseServices = FirebaseServices();
 
   double _rating;
-  String _comment;
+  String _comment = "";
 
   bool _loading = false;
 
@@ -148,7 +148,7 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
                                     ConnectionState.waiting) {
                                   return Center(child: CircularProgressIndicator());
                                 }
-                                if(snapshot.connectionState == ConnectionState.active){
+                                if(snapshot.connectionState == ConnectionState.active && snapshot.hasData){
                                   return Column(
                                       children: snapshot.data.docs
                                           .map((DocumentSnapshot document) {
@@ -184,10 +184,10 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            Text(
+                                            document['comment'] != null? Text(
                                               document['comment'],
                                               maxLines: 20,
-                                            ),
+                                            ) : Text(''),
                                             SizedBox(
                                               height: 10,
                                             ),
@@ -265,6 +265,7 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
                       maxLength: 500,
                       minLines: 1,
                       maxLines: 20,
+                      onChanged: (value) => _comment = value,
                       decoration: InputDecoration(
                         enabledBorder: const OutlineInputBorder(
                           // width: 0.0 produces a thin "hairline" border
@@ -293,7 +294,7 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
                                   user.uid,
                                   widget.sellerId,
                                   _rating,
-                                  _experienceCtrl.text, user.email);
+                                  _comment, user.email);
                               await _firebaseServices
                                   .checkStoreReview(widget.sellerId);
                               setState(() {

@@ -86,8 +86,8 @@ class PawIt extends StatelessWidget {
                                               image: NetworkImage(
                                                   data['Image url']))),
                                     ),
-                                    RatingBarIndicator(
-                                      rating: 5,
+                                    data['Rating'] == 0 ? Text('No rating') :RatingBarIndicator(
+                                      rating: data['Rating'].toDouble(),
                                       itemBuilder: (context, index) => Icon(
                                         Icons.star,
                                         color: Colors.amber,
@@ -245,8 +245,8 @@ class PawIt extends StatelessWidget {
                                               image: NetworkImage(
                                                   data['Image url']))),
                                     ),
-                                    RatingBarIndicator(
-                                      rating: 5,
+                                    data['Rating'] == 0 ? Text('No rating') : RatingBarIndicator(
+                                      rating: data['Rating'].toDouble(),
                                       itemBuilder: (context, index) => Icon(
                                         Icons.star,
                                         color: Colors.amber,

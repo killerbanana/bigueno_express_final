@@ -1,5 +1,6 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/send_message.dart';
+import 'package:biguenoexpress/screens/marketplace/update_caption.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
 import 'package:biguenoexpress/screens/reviews/marketplace/marketplace_write_review.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
@@ -64,9 +65,9 @@ class _MarketPlaceState extends State<MarketPlace> {
                                 width: 100,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: NetworkImage(
-                                          _sellerList[index]['Image url']),
-                                    )),
+                                  image: NetworkImage(
+                                      _sellerList[index]['Image url']),
+                                )),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
@@ -109,19 +110,20 @@ class _MarketPlaceState extends State<MarketPlace> {
                               _sellerList[index]['Rating'] <= 0
                                   ? Text('No rating')
                                   : RatingBarIndicator(
-                                rating: _sellerList[index]['Rating'],
-                                itemBuilder: (context, index) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                itemCount: 5,
-                                itemSize: 20.0,
-                                direction: Axis.horizontal,
-                              ),
+                                      rating: _sellerList[index]['Rating'],
+                                      itemBuilder: (context, index) => Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      itemCount: 5,
+                                      itemSize: 10.0,
+                                      direction: Axis.horizontal,
+                                    ),
                             ],
                           ),
                         ],
                       ),
+                      Text(_sellerList[index]['Short desc'], maxLines: 10,),
                       SizedBox(
                         height: 10,
                       ),
@@ -149,7 +151,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                               children: snapshot.data.docs
                                   .map((DocumentSnapshot document) {
                                 Map<String, dynamic> data =
-                                document.data() as Map<String, dynamic>;
+                                    document.data() as Map<String, dynamic>;
                                 return Container(
                                   height: 220,
                                   child: Card(
@@ -160,7 +162,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(20),
+                                              BorderRadius.circular(20),
                                         ),
                                         height: 100,
                                         width: 250,
@@ -198,7 +200,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                   builder: (context) => SendMessage(
                                       receiverId: _sellerId[index],
                                       receiverName: _sellerList[index]
-                                      ['Shop Name']),
+                                          ['Shop Name']),
                                 ),
                               );
                             },
@@ -226,7 +228,8 @@ class _MarketPlaceState extends State<MarketPlace> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => PawIt()),
+                                MaterialPageRoute(
+                                    builder: (context) => PawIt()),
                               );
                             },
                             child: Container(
@@ -253,12 +256,37 @@ class _MarketPlaceState extends State<MarketPlace> {
                       SizedBox(
                         height: 10,
                       ),
-                      TextButton(onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MarketPlaceWriteReview(sellerId: _sellerId[index],)),
-                        );
-                      }, child: Text('Write a Review')),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          user.uid == _sellerId[index] ? Text(''): TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MarketPlaceWriteReview(
+                                          sellerId: _sellerId[index],
+                                        )),
+                              );
+                            },
+                            child: Text('Write a Review'),
+                          ),
+                          user.uid != _sellerId[index] ? Text(''): TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateCaption(
+                                          sellerId: _sellerId[index],
+                                        )),
+                              );
+                            },
+                            child: Text('Edit my caption'),
+                          ),
+                        ],
+                      ),
                       Divider(
                         thickness: 10,
                       )
@@ -280,15 +308,13 @@ class _MarketPlaceState extends State<MarketPlace> {
     });
     await FirebaseFirestore.instance
         .collection('partner')
-        .where('Category', isEqualTo: 'Merchant').where("Verified", isEqualTo: true)
+        .where('Category', isEqualTo: 'Merchant')
+        .where("Verified", isEqualTo: true)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        if (doc.id == user.uid) {
-        } else {
-          _sellerList.add(doc);
-          _sellerId.add(doc.id);
-        }
+        _sellerList.add(doc);
+        _sellerId.add(doc.id);
       });
     });
     setState(() {

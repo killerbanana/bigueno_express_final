@@ -116,6 +116,7 @@ class _PawItForDeliveryState extends State<PawItForDelivery> {
                             Divider(),
                             Text(
                               'Delivery Details',
+
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -143,7 +144,7 @@ class _PawItForDeliveryState extends State<PawItForDelivery> {
                                       children: [
                                         Text(
                                             'Delivery Address: '),
-                                        Text('${data['delivery address']}')
+                                        Expanded(child: Text('${data['delivery address']}', maxLines: 3,))
                                       ],
                                     ),
 
