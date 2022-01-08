@@ -243,7 +243,7 @@ class PawIt extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           image: DecorationImage(
                                               image: NetworkImage(
-                                                  data['Img Url']))),
+                                                  data['Image url']))),
                                     ),
                                     RatingBarIndicator(
                                       rating: 5,
