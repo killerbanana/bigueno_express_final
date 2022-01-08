@@ -58,7 +58,7 @@ class PawItProfile extends StatelessWidget {
                         child: Row(
                           children: [
                             CircleAvatar(
-                              backgroundImage: NetworkImage(data['Img Url']),
+                              backgroundImage: NetworkImage(data['Image url']),
                             ),
                             SizedBox(
                               width: 20,
