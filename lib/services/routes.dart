@@ -23,6 +23,7 @@ import 'package:biguenoexpress/screens/pawit/order_status/paw_it_completed_deliv
 import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_confirmation_delivery.dart';
 import 'package:biguenoexpress/screens/pawit/order_status/paw_it_for_delivery.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it_comments.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_deliver_history.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
 import 'package:biguenoexpress/screens/reviews/marketplace/marketplace_write_review.dart';
@@ -59,4 +60,5 @@ final Map<String, WidgetBuilder> routes = {
   PawItCompletedDelivery.routeName: (context) => PawItCompletedDelivery(),
   PawItDeliverHistory.routeName: (context) => PawItDeliverHistory(),
   MarketPlaceWriteReview.routeName: (context) => MarketPlaceWriteReview(),
+  PawItComments.routeName: (context) => PawItComments(),
 };

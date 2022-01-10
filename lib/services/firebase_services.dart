@@ -92,6 +92,16 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => print("Failed to confirm order: $error"));
   }
 
+  Future updateStatus(String uid, String status) {
+    return partner
+        .doc(uid)
+        .update({
+      "Status": status,
+    })
+        .then((value) => print("Order Confirmed"))
+        .catchError((error) => print("Failed to confirm order: $error"));
+  }
+
   Future confirmOrderForDelivery(String uid, String riderId) {
     return orders
         .doc(uid)

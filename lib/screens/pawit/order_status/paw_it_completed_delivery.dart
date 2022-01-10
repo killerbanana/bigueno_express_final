@@ -29,7 +29,7 @@ class _PawItCompletedDeliveryState extends State<PawItCompletedDelivery> {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('orders')
-                  .where('rider status', isEqualTo: "Delivered")
+                  .where('rider status', isEqualTo: "Delivered").where('rider id', isEqualTo: user.uid)
                   .orderBy('date', descending: true)
                   .snapshots(),
               builder: (BuildContext context,
@@ -113,7 +113,7 @@ class _PawItCompletedDeliveryState extends State<PawItCompletedDelivery> {
                                       children: [
                                         Text(
                                             'Delivery Address: '),
-                                        Text('${data['delivery address']}')
+                                        Expanded(child: Text('${data['delivery address']}', maxLines: 3,))
                                       ],
                                     ),
 

@@ -1,7 +1,9 @@
 import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
 import 'package:biguenoexpress/screens/pawit/order_status/paw_it_completed_delivery.dart';
+import 'package:biguenoexpress/screens/pawit/paw_it_comments.dart';
 import 'package:biguenoexpress/screens/pawit/paw_it_deliver_history.dart';
+import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +13,20 @@ import 'order_status/paw_it_for_confirmation_delivery.dart';
 import 'order_status/paw_it_for_delivery.dart';
 
 // ignore: must_be_immutable
-class PawItProfile extends StatelessWidget {
+class PawItProfile extends StatefulWidget {
   static String routeName = "/pawItProfile";
+
+  @override
+  State<PawItProfile> createState() => _PawItProfileState();
+}
+
+class _PawItProfileState extends State<PawItProfile> {
   final CollectionReference partner =
       FirebaseFirestore.instance.collection('partner');
+
   Users user;
+
+  FirebaseServices _firebaseServices = FirebaseServices();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +40,9 @@ class PawItProfile extends StatelessWidget {
                 CupertinoIcons.chat_bubble,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, PawItComments.routeName);
+              },
             ),
           ],
         ),
@@ -56,42 +69,54 @@ class PawItProfile extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(data['Image url']),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
                               children: [
-                                Text(
-                                  data['Shop Name'],
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(data['Image url']),
                                 ),
-                                Row(
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Following 5',
+                                      data['Shop Name'],
                                       style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w300),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    VerticalDivider(),
-                                    Text(
-                                      'Followers 13',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w300),
-                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Following 5',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                        VerticalDivider(),
+                                        Text(
+                                          'Followers 13',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 )
                               ],
-                            )
+                            ),
+                            if(data['Status'] == "Online")
+                              CircleAvatar(backgroundColor: Colors.green, radius: 10,),
+                            if(data['Status'] == "Driving")
+                              CircleAvatar(backgroundColor: Colors.orange, radius: 10,),
+                            if(data['Status'] == "Not Available")
+                              CircleAvatar(backgroundColor: Colors.redAccent, radius: 10,),
                           ],
                         ),
                       ),
@@ -101,7 +126,9 @@ class PawItProfile extends StatelessWidget {
                       press: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => PawItDeliverHistory(uid: user.uid)),
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PawItDeliverHistory(uid: user.uid)),
                         );
                       },
                       title: "My Deliveries",
@@ -128,14 +155,16 @@ class PawItProfile extends StatelessWidget {
                           ),
                           SalesActionButton(
                             press: () {
-                              Navigator.pushNamed(context, PawItForDelivery.routeName);
+                              Navigator.pushNamed(
+                                  context, PawItForDelivery.routeName);
                             },
                             iconData: CupertinoIcons.cube_box,
                             title: "To Deliver",
                           ),
                           SalesActionButton(
-                            press: (){
-                              Navigator.pushNamed(context, PawItCompletedDelivery.routeName);
+                            press: () {
+                              Navigator.pushNamed(
+                                  context, PawItCompletedDelivery.routeName);
                             },
                             iconData: CupertinoIcons.flag_circle,
                             title: "Delivered",
@@ -143,12 +172,69 @@ class PawItProfile extends StatelessWidget {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text('Click button to update current status'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            await _firebaseServices.updateStatus(user.uid, "Online");
+                            setState(() {
+
+                            });
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.green),
+                          ),
+                          child: Text(
+                            'Online',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await _firebaseServices.updateStatus(user.uid, "Driving");
+                            setState(() {
+
+                            });
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.orange),
+                          ),
+                          child: Text(
+                            'Driving',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await _firebaseServices.updateStatus(user.uid, "Not Available");
+                            setState(() {
+
+                            });
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.redAccent),
+                          ),
+                          child: Text(
+                            'Not Available',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               );
             }
 
-            return Text("loading");
+            return Center(child: Text("loading"));
           },
         ));
   }
