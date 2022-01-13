@@ -1,4 +1,8 @@
+import 'package:biguenoexpress/models/products.dart';
 import 'package:biguenoexpress/models/users.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_deliver_edit_product.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_add_product.dart';
+import 'package:biguenoexpress/screens/marketplace/marketplace_edit_product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +42,24 @@ class MarketplaceMyProduct extends StatelessWidget {
                   ),
                   title: Text(data['product name']),
                   subtitle: Text('\u20B1' + ' '+  data['price'].toString()),
-                  trailing: Text('Edit'),
+                  trailing: GestureDetector(child: Text('Edit'), onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MarketPlaceEditProduct(
+                              productId: document.id,
+                              product: new Products(
+                                  document.id,
+                                  data['product name'],
+                                  false,
+                                  data['description'],
+                                  data['imgUrl'],
+                                  data['price'],
+                                  data['stock'],
+                                  0,
+                                  0),
+                            )));
+                  },),
                 );
               }).toList(),
             );

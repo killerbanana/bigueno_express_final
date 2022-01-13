@@ -45,7 +45,7 @@ class _FoodDeliveryCartState extends State<FoodDeliveryCart> {
         cart.add(new Cart(doc['price'].toDouble(), doc['product image'],
             doc['product name'], doc['quantity'].toDouble(), doc['seller'], total, doc['product id']));
       });
-      maxTotal = total + 50;
+      maxTotal = total;
     });
   }
 
@@ -136,21 +136,6 @@ class _FoodDeliveryCartState extends State<FoodDeliveryCart> {
                                     ),
                                     Text(
                                       '\u20B1 ${total.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 18),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Delivery Fee',
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 18),
-                                    ),
-                                    Text(
-                                      '\u20B1 50.00',
                                       style: TextStyle(
                                           color: Colors.black, fontSize: 18),
                                     ),

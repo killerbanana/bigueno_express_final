@@ -82,7 +82,6 @@ class MarketplaceProfile extends StatelessWidget{
                       children: [
                         SalesActionButton(iconData: CupertinoIcons.cube_box, title: "To Deliver",),
                         SalesActionButton(iconData: CupertinoIcons.delete_right, title: "Cancelled",),
-                        SalesActionButton(iconData: CupertinoIcons.bars, title: "More",),
                       ],
                     ),
                   ),
