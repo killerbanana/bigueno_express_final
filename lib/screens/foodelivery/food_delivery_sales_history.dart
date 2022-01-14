@@ -60,19 +60,22 @@ class _FoodDeliverySalesHistoryState extends State<FoodDeliverySalesHistory> {
                     setState(() => _rowsPerPage = rowsPerPage),
                 columns: [
                   DataColumn(
-                    label: Text('CUSTOMER NAME', style: columnStyle),
+                    label: Text('SHOP NAME', style: columnStyle),
                   ),
                   DataColumn(
-                    label: Text('DATE DELIVERED', style: columnStyle),
+                    label: Text('CATEGORY', style: columnStyle),
                   ),
                   DataColumn(
                     label: Text('STATUS', style: columnStyle),
                   ),
                   DataColumn(
-                    label: Text('ORDER', style: columnStyle),
+                    label: Text('OPENING HOURS', style: columnStyle),
                   ),
                   DataColumn(
-                    label: Text('TOTAL', style: columnStyle),
+                    label: Text('FEATURED', style: columnStyle),
+                  ),
+                  DataColumn(
+                    label: Text('FEATURED', style: columnStyle),
                   ),
                 ],
                 source: _dataSource),

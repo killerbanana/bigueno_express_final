@@ -236,19 +236,6 @@ class _LogInScreenState extends State<LogInScreen> {
                   height: 20,
                 ),
                 GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    'OR',
-                    style: kBodyText,
-                  ),
-                ),
-                SignInButton(
-                  Buttons.Facebook,
-                  onPressed: () {
-                    _loginWithFacebook();
-                  },
-                ),
-                GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,

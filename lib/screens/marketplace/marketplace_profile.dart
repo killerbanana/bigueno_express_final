@@ -75,17 +75,6 @@ class MarketplaceProfile extends StatelessWidget{
                     ),
                   ),
                   Divider(),
-                  Container(
-                    color: Colors.white,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SalesActionButton(iconData: CupertinoIcons.cube_box, title: "To Deliver",),
-                        SalesActionButton(iconData: CupertinoIcons.delete_right, title: "Cancelled",),
-                      ],
-                    ),
-                  ),
-                  Divider(),
                   SellerProfileButton(title: "My Products", isNew: false, iconColor: Colors.redAccent, iconData: CupertinoIcons.cube_box, subTitle: "", press: () {
                     Navigator.pushNamed(context, MarketplaceMyProduct.routeName);
                   },),

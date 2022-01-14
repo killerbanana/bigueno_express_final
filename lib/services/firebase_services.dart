@@ -216,6 +216,14 @@ class FirebaseServices extends ChangeNotifier {
         .catchError((error) => print("Failed to remove cart: $error"));
   }
 
+  Future deleteProduct(String productId) {
+    return product
+        .doc(productId)
+        .delete()
+        .then((value) => print("Item Removed"))
+        .catchError((error) => print("Failed to remove item: $error"));
+  }
+
   Future deleteEntireCart(String userId) {
     return FirebaseFirestore.instance
         .collection('shop cart')

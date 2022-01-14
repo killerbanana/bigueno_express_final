@@ -3,15 +3,17 @@ import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_deliver_edit_product.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_add_product.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_edit_product.dart';
+import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class MarketplaceMyProduct extends StatelessWidget {
   static String routeName = "/marketplaceMyProduct";
   final CollectionReference _marketplaceProduct = FirebaseFirestore.instance.collection('products');
-
+  FirebaseServices _firebaseServices = FirebaseServices();
   Users user;
   @override
   Widget build(BuildContext context) {
@@ -42,24 +44,49 @@ class MarketplaceMyProduct extends StatelessWidget {
                   ),
                   title: Text(data['product name']),
                   subtitle: Text('\u20B1' + ' '+  data['price'].toString()),
-                  trailing: GestureDetector(child: Text('Edit'), onTap: (){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MarketPlaceEditProduct(
-                              productId: document.id,
-                              product: new Products(
-                                  document.id,
-                                  data['product name'],
-                                  false,
-                                  data['description'],
-                                  data['imgUrl'],
-                                  data['price'],
-                                  data['stock'],
-                                  0,
-                                  0),
-                            )));
-                  },),
+                  trailing: Container(
+                    width: 140,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            await _firebaseServices.deleteProduct(document.id);
+                          },
+                          child: Icon(FontAwesomeIcons.trash, color: Colors.red,)
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MarketPlaceEditProduct(
+                                      productId: document.id,
+                                      product: new Products(
+                                          document.id,
+                                          data['product name'],
+                                          false,
+                                          data['description'],
+                                          data['imgUrl'],
+                                          data['price'],
+                                          data['stock'],
+                                          0,
+                                          0),
+                                    )));
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStateProperty.all(
+                                Colors.blueAccent),
+                          ),
+                          child: Text(
+                            'EDIT',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }).toList(),
             );

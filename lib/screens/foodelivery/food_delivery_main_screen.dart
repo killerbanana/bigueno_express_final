@@ -146,10 +146,6 @@ class _FooDeliveryMainScreenState extends State<FoodDeliveryMainScreen> {
                                   ),
                                   GestureDetector(
                                     onTap: (){
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => MarketPlaceWriteReview(sellerId: widget.storeId,)),
-                                      );
                                     },
                                     child: Row(
                                       crossAxisAlignment:
