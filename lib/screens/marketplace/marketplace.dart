@@ -49,6 +49,7 @@ class _MarketPlaceState extends State<MarketPlace> {
             physics: NeverScrollableScrollPhysics(),
             itemCount: _sellerList.length,
             itemBuilder: (BuildContext context, int index) {
+
               return Container(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -139,53 +140,55 @@ class _MarketPlaceState extends State<MarketPlace> {
                           }
 
                           if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Text("Loading");
-                          }
+                              ConnectionState.active && snapshot.hasData) {
 
-                          return Container(
-                            height: 220,
-                            child: ListView(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              children: snapshot.data.docs
-                                  .map((DocumentSnapshot document) {
-                                Map<String, dynamic> data =
-                                    document.data() as Map<String, dynamic>;
-                                return Container(
-                                  height: 220,
-                                  child: Card(
-                                    elevation: 5,
-                                    child: InkWell(
-                                      onTap: () {},
-                                      splashColor: Colors.greenAccent,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        height: 100,
-                                        width: 250,
-                                        child: GridTile(
-                                          child: Image.network(
-                                            data['imgUrl'],
-                                            fit: BoxFit.cover,
+                            return snapshot.data.size <= 0 ? Container(): Container(
+                              height: 220,
+                              child: ListView(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                children: snapshot.data.docs
+                                    .map((DocumentSnapshot document) {
+                                  Map<String, dynamic> data =
+                                  document.data() as Map<String, dynamic>;
+                                  return Container(
+                                    height: 220,
+                                    child: Card(
+                                      elevation: 5,
+                                      child: InkWell(
+                                        onTap: () {},
+                                        splashColor: Colors.greenAccent,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(20),
                                           ),
-                                          footer: GridTileBar(
-                                            backgroundColor: Colors.black45,
-                                            title: Text(
-                                              '\u20B1  ${data['price']} ${data['product name']}',
-                                              textAlign: TextAlign.center,
+                                          height: 100,
+                                          width: 250,
+                                          child: GridTile(
+                                            child: Image.network(
+                                              data['imgUrl'],
+                                              fit: BoxFit.cover,
+                                            ),
+                                            footer: GridTileBar(
+                                              backgroundColor: Colors.black45,
+                                              title: Text(
+                                                '\u20B1  ${data['price']} ${data['product name']}',
+                                                textAlign: TextAlign.center,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          );
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          }
+
+                          return Text('Loading');
+
                         },
                       ),
                       Row(

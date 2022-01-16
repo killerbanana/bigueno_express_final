@@ -311,26 +311,6 @@ class FoodDelivery extends StatelessWidget {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.star_fill,
-                                    color: Colors.yellow,
-                                  ),
-                                  data['Rating'] != 0
-                                      ? Text(
-                                          data['Rating'].toString(),
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Text(
-                                          '(No Rating)',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w300),
-                                        )
-                                ],
-                              )
                             ],
                           ),
                           Divider(

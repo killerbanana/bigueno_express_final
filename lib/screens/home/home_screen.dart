@@ -12,6 +12,7 @@ import 'package:biguenoexpress/screens/pawit/paw_it_profile.dart';
 import 'package:biguenoexpress/screens/test/model/product.dart';
 import 'package:biguenoexpress/screens/test/provider/products.dart';
 import 'package:biguenoexpress/services/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:biguenoexpress/services/firebase_services.dart';
 import 'package:biguenoexpress/widgets/icon_with_counter.dart';
 import 'package:biguenoexpress/screens/partner/partner.dart';
@@ -226,44 +227,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              Container(
-                height: 220,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {},
-                            splashColor: Colors.greenAccent,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              height: 220,
-                              width: 170,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: GridTile(
-                                  child: Image.network(
-                                    'https://jb-ph-cdn.tillster.com/menu-images/prod/45df1872-c7f7-4b3d-baa9-1b0c4f56a5cc.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                                  footer: GridTileBar(
-                                    backgroundColor: Colors.black45,
-                                    title: Text(
-                                      '\u20B1  125',
-                                      textAlign: TextAlign.center,
+              FutureBuilder(
+                future: FirebaseFirestore.instance.collection('promos').get(),
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.done && snapshot.hasData){
+                    return Container(
+                      height: 220,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 5,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {},
+                              splashColor: Colors.greenAccent,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                height: 220,
+                                width: 170,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: GridTile(
+                                    child: Image.network(
+                                      'https://jb-ph-cdn.tillster.com/menu-images/prod/45df1872-c7f7-4b3d-baa9-1b0c4f56a5cc.png',
+                                      fit: BoxFit.cover,
                                     ),
-                                    trailing: GestureDetector(
-                                        onTap: () {},
-                                        child: Icon(CupertinoIcons.cart)),
+                                    footer: GridTileBar(
+                                      backgroundColor: Colors.black45,
+                                      title: Text(
+                                        '\u20B1  125',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      trailing: GestureDetector(
+                                          onTap: () {},
+                                          child: Icon(CupertinoIcons.cart)),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        )),
+                          )),
+                    );
+                  }
+
+                  return Text('');
+                }
               ),
               SizedBox(
                 height: 10,

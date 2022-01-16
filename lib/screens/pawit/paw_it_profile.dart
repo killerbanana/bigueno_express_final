@@ -90,23 +90,6 @@ class _PawItProfileState extends State<PawItProfile> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Following 5',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300),
-                                        ),
-                                        VerticalDivider(),
-                                        Text(
-                                          'Followers 13',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300),
-                                        ),
-                                      ],
-                                    )
                                   ],
                                 )
                               ],

@@ -20,7 +20,7 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
   TextEditingController _experienceCtrl;
   FirebaseServices _firebaseServices = FirebaseServices();
 
-  double _rating;
+  double _rating = 0;
   String _comment = "";
 
   bool _loading = false;
@@ -173,7 +173,7 @@ class _MarketPlaceWriteReviewState extends State<MarketPlaceWriteReview> {
                                               height: 10,
                                             ),
                                             RatingBarIndicator(
-                                              rating: document['rating'],
+                                              rating: document['rating'].toDouble(),
                                               itemSize: 15,
                                               itemBuilder: (context, _) => Icon(
                                                 Icons.star,
