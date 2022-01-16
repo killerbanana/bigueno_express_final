@@ -105,21 +105,21 @@ class _PawItProfileState extends State<PawItProfile> {
                       ),
                     ),
                     Divider(),
-                    SellerProfileButton(
-                      press: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PawItDeliverHistory(uid: user.uid)),
-                        );
-                      },
-                      title: "My Deliveries",
-                      isNew: false,
-                      iconColor: Colors.blueAccent,
-                      iconData: CupertinoIcons.list_dash,
-                      subTitle: "View Delivery History",
-                    ),
+                    // SellerProfileButton(
+                    //   press: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) =>
+                    //               PawItDeliverHistory(uid: user.uid)),
+                    //     );
+                    //   },
+                    //   title: "My Deliveries",
+                    //   isNew: false,
+                    //   iconColor: Colors.blueAccent,
+                    //   iconData: CupertinoIcons.list_dash,
+                    //   subTitle: "View Delivery History",
+                    // ),
                     Divider(
                       height: 1,
                     ),

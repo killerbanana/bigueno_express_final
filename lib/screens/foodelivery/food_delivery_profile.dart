@@ -82,19 +82,19 @@ class FoodDeliveryProfile extends StatelessWidget {
                       ),
                     ),
                     Divider(),
-                    SellerProfileButton(
-                      press: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FoodDeliverySalesHistory(uid: user.uid)),
-                        );
-                      },
-                      title: "My Sales",
-                      isNew: false,
-                      iconColor: Colors.blueAccent,
-                      iconData: CupertinoIcons.list_dash,
-                      subTitle: "View Sales History",
-                    ),
+                    // SellerProfileButton(
+                    //   press: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) => FoodDeliverySalesHistory(uid: user.uid)),
+                    //     );
+                    //   },
+                    //   title: "My Sales",
+                    //   isNew: false,
+                    //   iconColor: Colors.blueAccent,
+                    //   iconData: CupertinoIcons.list_dash,
+                    //   subTitle: "View Sales History",
+                    // ),
                     Divider(
                       height: 1,
                     ),
