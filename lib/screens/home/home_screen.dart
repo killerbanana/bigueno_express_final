@@ -3,6 +3,7 @@ import 'package:biguenoexpress/models/users.dart';
 import 'package:biguenoexpress/screens/chat/chat_screen.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_cart.dart';
+import 'package:biguenoexpress/screens/foodelivery/food_delivery_main_screen.dart';
 import 'package:biguenoexpress/screens/foodelivery/food_delivery_profile.dart';
 import 'package:biguenoexpress/screens/home/my_orders.dart';
 import 'package:biguenoexpress/screens/marketplace/marketplace_add_product.dart';
@@ -105,8 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => FoodDeliveryCart(
-                          )),
+                          builder: (context) => FoodDeliveryCart()),
                     );
                   },
                 );
@@ -227,54 +227,93 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              Text(
+                'DAILY DEALS'
+                    '',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+              ),
               FutureBuilder(
-                future: FirebaseFirestore.instance.collection('promos').get(),
-                builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.done && snapshot.hasData){
-                    return Container(
-                      height: 220,
-                      child: ListView.builder(
+                  future: FirebaseFirestore.instance
+                      .collection('products')
+                      .where('daily deals', isEqualTo: true)
+                      .get(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      return Container(
+                        height: 220,
+                        width: double.infinity  ,
+                        child: ListView(
+                          shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: 5,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              onTap: () {},
-                              splashColor: Colors.greenAccent,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                height: 220,
-                                width: 170,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: GridTile(
-                                    child: Image.network(
-                                      'https://jb-ph-cdn.tillster.com/menu-images/prod/45df1872-c7f7-4b3d-baa9-1b0c4f56a5cc.png',
-                                      fit: BoxFit.cover,
+                          children:
+                              snapshot.data.docs.map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data() as Map<String, dynamic>;
+                            return Container(
+                              height: 220,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FoodDeliveryMainScreen(
+                                            storeId: data['seller id'],
+                                            storeName: data['Shop Name'],
+                                          )),
+                                    );
+                                  },
+                                  splashColor: Colors.greenAccent,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(20),
                                     ),
-                                    footer: GridTileBar(
-                                      backgroundColor: Colors.black45,
-                                      title: Text(
-                                        '\u20B1  125',
-                                        textAlign: TextAlign.center,
+                                    height: 220,
+                                    width: 170,
+                                    child: ClipRRect(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      child: GridTile(
+                                        child: Image.network(
+                                          data['imgUrl'],
+                                          fit: BoxFit.cover,
+                                        ),
+                                        footer: GridTileBar(
+                                          backgroundColor: Colors.black45,
+                                          title: Text(
+                                            '\u20B1  ${data['price'].toString()}',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          trailing: GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => FoodDeliveryMainScreen(
+                                                        storeId: data['seller id'],
+                                                        storeName: data['Shop Name'],
+                                                      )),
+                                                );
+                                              },
+                                              child: Icon(
+                                                  CupertinoIcons.cart)),
+                                        ),
                                       ),
-                                      trailing: GestureDetector(
-                                          onTap: () {},
-                                          child: Icon(CupertinoIcons.cart)),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          )),
-                    );
-                  }
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    }
 
-                  return Text('');
-                }
-              ),
+                    return Text('');
+                  }),
               SizedBox(
                 height: 10,
               ),
@@ -282,72 +321,109 @@ class _HomeScreenState extends State<HomeScreen> {
                 'POPULAR NOW',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               ),
-              Container(
-                height: 120,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {},
-                            splashColor: Colors.greenAccent,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black87),
-                                  borderRadius: BorderRadius.circular(20),
+              FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('products')
+                      .where('popularNow', isEqualTo: true)
+                      .get(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      return Container(
+                        height: 120,
+                        width: double.infinity  ,
+                        child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          children:
+                          snapshot.data.docs.map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                            document.data() as Map<String, dynamic>;
+                            return Container(
+                              height: 120,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FoodDeliveryMainScreen(
+                                            storeId: data['seller id'],
+                                            storeName: data['Shop Name'],
+                                          )),
+                                    );
+                                  },
+                                  splashColor: Colors.greenAccent,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black87),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      height: 120,
+                                      width: 350,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 80,
+                                              width: 80,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    fit: BoxFit.fill,
+                                                    image: NetworkImage(
+                                                        data['imgUrl']),
+                                                  )),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  data['product name'],
+                                                  overflow:TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 20),
+                                                ),
+                                                Container(
+                                                  width: 220,
+                                                  child: Text(
+                                                    data['description'],
+                                                    maxLines: 1,
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.w300,
+                                                        fontSize: 16),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '\u20B1  ${data['price'].toString()}',
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 20),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      )),
                                 ),
-                                height: 120,
-                                width: 350,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 80,
-                                        width: 80,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: NetworkImage(
-                                              "https://www.lutongbahayrecipe.com/wp-content/uploads/2019/04/lutong-bahay-recipe-filipino-beef-empanada-1200x755.jpg"),
-                                        )),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Special Empanada',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20),
-                                          ),
-                                          Text(
-                                            'Aling Patatas Empanada',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 16),
-                                          ),
-                                          Text(
-                                            '\u20B1  100',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )),
-                          ),
-                        )),
-              ),
+                              )
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    }
+
+                    return Text('');
+                  }),
             ],
           ),
         ),
@@ -385,11 +461,19 @@ class Drawers extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == null) {
               print(snapshot.data);
-              return DrawerOriginal(auth: _auth, email: user.email,);
+              return DrawerOriginal(
+                auth: _auth,
+                email: user.email,
+              );
             } else {
               Map<String, dynamic> datas = snapshot.data;
               print(datas["Category"]);
-              return DrawerPartner(auth: _auth, category: datas["Category"], shopEmail: user.email, shopName: datas['Shop Name'],);
+              return DrawerPartner(
+                auth: _auth,
+                category: datas["Category"],
+                shopEmail: user.email,
+                shopName: datas['Shop Name'],
+              );
             }
           }
           return Drawer(
@@ -404,7 +488,8 @@ class Drawers extends StatelessWidget {
 class DrawerOriginal extends StatelessWidget {
   const DrawerOriginal({
     Key key,
-    @required AuthService auth, this.email,
+    @required AuthService auth,
+    this.email,
   })  : _auth = auth,
         super(key: key);
 
@@ -499,7 +584,9 @@ class DrawerPartner extends StatelessWidget {
   const DrawerPartner({
     Key key,
     @required AuthService auth,
-    this.category, this.shopName, this.shopEmail,
+    this.category,
+    this.shopName,
+    this.shopEmail,
   })  : _auth = auth,
         super(key: key);
 
@@ -574,7 +661,8 @@ class DrawerPartner extends StatelessWidget {
                     color: Colors.black87,
                     icon: FontAwesomeIcons.handshake,
                     click: () {
-                      Navigator.popAndPushNamed(context, PawItProfile.routeName);
+                      Navigator.popAndPushNamed(
+                          context, PawItProfile.routeName);
                     },
                   ),
               ],

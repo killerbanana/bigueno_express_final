@@ -11,6 +11,9 @@ class FirebaseServices extends ChangeNotifier {
   CollectionReference _freeDelivery =
       FirebaseFirestore.instance.collection('free delivery');
 
+  CollectionReference _addressLine =
+  FirebaseFirestore.instance.collection('user address');
+
   CollectionReference partner =
       FirebaseFirestore.instance.collection('partner');
   CollectionReference message = FirebaseFirestore.instance.collection('chat');
@@ -79,6 +82,37 @@ class FirebaseServices extends ChangeNotifier {
         })
         .then((value) => print("Order created"))
         .catchError((error) => print("Failed to create order: $error"));
+  }
+
+  Future addAddress(
+      String name,
+      String uid,
+      String address,
+      String contact) {
+    return _addressLine
+        .doc(uid)
+        .set({
+      "user name": name,
+      "uid": uid,
+      "address": address,
+      "contact": contact,
+    })
+        .then((value) => print("Address created"))
+        .catchError((error) => print("Failed to create address: $error"));
+  }
+
+  Future<DocumentSnapshot> checkAddress(String userId) async {
+    DocumentSnapshot exist;
+    await FirebaseFirestore.instance
+        .collection('user address')
+        .doc(userId)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        exist = documentSnapshot;
+      }
+    });
+    return exist;
   }
 
   Future confirmOrder(String uid) {
