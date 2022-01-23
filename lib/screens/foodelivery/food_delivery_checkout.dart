@@ -215,7 +215,7 @@ class _FoodDeliveryCheckoutState extends State<FoodDeliveryCheckout> {
                           ? Center(
                               child: CircularProgressIndicator(),
                             )
-                          : TextButton(
+                          :  TextButton(
                               onPressed: () async {
                                 if (_formKey.currentState.validate()) {
                                   loading = true;
