@@ -67,7 +67,7 @@ class _FoodDeliveryCheckoutState extends State<FoodDeliveryCheckout> {
     });
     DocumentSnapshot documentSnapshot =
         await _firebaseServices.checkAddress(uid);
-    if (documentSnapshot.exists) {
+    if ( documentSnapshot != null) {
       _cartDeliveryAddressController.text = documentSnapshot['address'];
       _cartDeliveryNameController.text = documentSnapshot['user name'];
       _cartDeliveryContactController.text = documentSnapshot['contact'];
